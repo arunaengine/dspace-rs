@@ -2,13 +2,13 @@ services:
   consumer-connector:
     build: connector
     platform: ${DOCKER_PLATFORM:-linux/amd64}
-    # ports:
-    #   - "19191:9191" # connector default
-    #   - "19192:9192" # connector control
-    #   - "19193:9193" # connector management
-    #   - "19194:9194" # connector protocol
-    #   - "19291:9291" # data-plane public
-    #   - "19393:9393" # federated catalog
+    ports:
+      - "19191:9191" # connector default
+      - "19192:9192" # connector control
+      - "19193:9193" # connector management
+      - "19194:9194" # connector protocol
+      - "19291:9291" # data-plane public
+      - "19393:9393" # federated catalog
     environment:
       EDC_VAULT: /config/vault.properties
       EDC_KEYSTORE: /config/vault-keys.p12
@@ -18,7 +18,6 @@ services:
       - ./conf/consumer-connector.config:/config
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    network_mode: "host"
 
   provider-connector:
     build: connector
@@ -39,3 +38,16 @@ services:
       - ./conf/provider-connector.config:/config
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  aruna-connector:
+    build: connector
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    environment:
+      EDC_VAULT: /config/vault.properties
+      EDC_KEYSTORE: /config/vault-keys.p12
+      EDC_KEYSTORE_PASSWORD: 123456
+      EDC_FS_CONFIG: /config/configuration.properties
+    volumes:
+      - ./conf/consumer-connector.config:/config
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: "host"
