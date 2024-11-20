@@ -139,6 +139,18 @@ mod transfer_process_api_get_test {
     }
 
     #[tokio::test]
+    async fn test_get_state_of_transfer_process() {
+        let provider_configuration = setup_provider_configuration();
+        let consumer_configuration = setup_consumer_configuration();
+
+        let (transfer_id, _, _) = setup_random_transfer_process(&consumer_configuration, &provider_configuration).await;
+
+        let response = transfer_process_api::get_transfer_process_state(&consumer_configuration, &transfer_id).await;
+
+        assert!(response.is_ok());
+    }
+
+    #[tokio::test]
     async fn test_transfer_process_get_with_unknown_id() {
         let consumer_configuration = setup_consumer_configuration();
 
