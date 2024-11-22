@@ -50,7 +50,7 @@ pub(crate) async fn update_contract_definition(State(state): State<SharedState>,
 
     info!("Received contract definition update for id {:#?} <> PUT /v2/contractdefinitions/:\n{:#?}\n", id.clone(), input);
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().await;
 
     if state.contains_key(&id) {
         let created_at = Utc::now().timestamp();
@@ -104,7 +104,7 @@ pub(crate) async fn create_contract_definition(State(state): State<SharedState>,
 
     info!("Received contract definition <> POST /v2/contractdefinitions:\n{:#?}\n", input);
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().await;
 
     let id = input.at_id.clone().unwrap_or_else(|| Uuid::new_v4().to_string());
 
@@ -160,7 +160,7 @@ pub(crate) async fn request_contract_definition(State(state): State<SharedState>
 
     info!("Received contract definition request <> POST /v2/contractdefinitions/request for query:\n{:#?}\n", query);
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
 
     // Collect all contract definitions into a vector
     let mut output: Vec<ContractDefinitionOutput> = state.values().cloned().collect();
@@ -271,7 +271,7 @@ pub(crate) async fn get_contract_definition(State(state): State<SharedState>, Pa
 
     info!("Received contract request <> GET /v2/contractdefinitions/{} for id:\n{:#?}\n", id.clone(), id.clone());
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
     match state.get(&id) {
         Some(output) => (StatusCode::OK, Json(output.clone())).into_response(),
         None => (StatusCode::NOT_FOUND, Json(error!("A contract definition with the given ID does not exist"))).into_response(),
@@ -296,7 +296,7 @@ pub(crate) async fn delete_contract_definition(State(state): State<SharedState>,
 
     info!("Received contract deletion request <> DELETE /v2/contractdefinitions/{} for id:\n{:#?}\n", id.clone(), id.clone());
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().await;
     if state.remove(&id).is_some() {
         StatusCode::NO_CONTENT.into_response()
     } else {

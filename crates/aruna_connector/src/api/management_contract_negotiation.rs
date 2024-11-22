@@ -76,7 +76,7 @@ pub(crate) async fn initiate_contract_negotiation(headers: HeaderMap, State(stat
 
     info!("Received initiate contract negotiation <> POST /v2/contractnegotiations:\n{:#?}\n", input);
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().await;
     let id = uuid::Uuid::new_v4().to_string();
     let created_at = Utc::now().timestamp();
 
@@ -138,7 +138,7 @@ pub(crate) async fn request_contract_negotiation(State(state): State<SharedState
 
     info!("Received contract negotiation request <> POST /v2/contractnegotiations/request for query:\n{:#?}\n", query);
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
 
     // Collect all contract negotiations into a vector
     let mut output: Vec<ContractNegotiation> = state.values().map(|(contract_negotiation, _, _)| contract_negotiation.clone()).collect();
@@ -258,7 +258,7 @@ pub(crate) async fn get_contract_negotiation(State(state): State<SharedState>, P
 
     info!("Received contract negotiation request <> GET /v2/contractnegotiations/{} for id:\n{:#?}\n", id.clone(), id.clone());
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
     match state.get(&id) {
         Some(output) => (StatusCode::OK, Json(output.0.clone())).into_response(),
         None => (StatusCode::NOT_FOUND, Json(error!("A contract negotiation with the given ID does not exist"))).into_response(),
@@ -288,7 +288,7 @@ pub(crate) async fn get_negotiation_state(State(state): State<SharedState>, Path
 
     info!("Received contract negotiation state request <> GET /v2/contractnegotiations/{}/state for id:\n{:#?}\n", id.clone(), id.clone());
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
     match state.get(&id) {
         Some(output) => (StatusCode::OK, Json(output.0.state.clone())).into_response(),
         None => (StatusCode::NOT_FOUND, Json(error!("A contract negotiation with the given ID does not exist"))).into_response(),
@@ -327,7 +327,7 @@ pub(crate) async fn terminate_contract_negotiation(State(state): State<SharedSta
 
     info!("Received contract negotiation termination request <> POST /v2/contractnegotiations/{}/terminate for id:\n{:#?}\nwith reason:{:#?}\n", id.clone(), id.clone(), reason.clone());
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock().await;
 
     if state.contains_key(&id) {
         let (negotiation, csm, psm) = state.get(&id).unwrap();
