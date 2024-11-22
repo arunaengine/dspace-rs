@@ -290,7 +290,7 @@ async fn main() {
         .route("/", put(management_contract_definition::update_contract_definition))
         // `POST /v2/contractdefinitions` goes to `create_contract_definition`
         .route("/", post(management_contract_definition::create_contract_definition))
-        // `POST /v2/contractdefinitions/{id}/request` goes to `request_contract_definition`
+        // `POST /v2/contractdefinitions/request` goes to `request_contract_definition`
         .route("/request", post(management_contract_definition::request_contract_definition))
         // `GET /v2/contractdefinitions/{id}` goes to `get_contract_definition`
         .route("/:id", get(management_contract_definition::get_contract_definition))
