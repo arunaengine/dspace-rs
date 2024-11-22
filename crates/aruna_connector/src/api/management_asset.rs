@@ -13,7 +13,7 @@ use edc_api::query_spec::SortOrder;
 
 type SharedState = Arc<Mutex<HashMap<String, AssetOutput>>>;
 
-async fn parse_input_to_output(input: AssetInput, id: String, created_at: i64) -> AssetOutput {
+async fn input2output(input: AssetInput, id: String, created_at: i64) -> AssetOutput {
     AssetOutput {
         context: input.context.clone(),
         at_id: Some(id.clone()),
@@ -107,7 +107,7 @@ pub(crate) async fn update_asset(State(state): State<SharedState>, Json(input): 
     if state.contains_key(&id) {
         let created_at = Utc::now().timestamp();
 
-        let asset_output = parse_input_to_output(input.clone(), id.clone(), created_at.clone()).await;
+        let asset_output = input2output(input.clone(), id.clone(), created_at.clone()).await;
 
         state.insert(id.clone(), asset_output);
         StatusCode::NO_CONTENT.into_response()
@@ -166,7 +166,7 @@ pub(crate) async fn create_asset(State(state): State<SharedState>, Json(input): 
 
     let created_at = Utc::now().timestamp();
 
-    let asset_output = parse_input_to_output(input.clone(), id.clone(), created_at.clone()).await;
+    let asset_output = input2output(input.clone(), id.clone(), created_at.clone()).await;
 
     state.insert(id.clone(), asset_output.clone());
 
