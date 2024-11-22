@@ -18,6 +18,7 @@ serde = { version = "1.0.203", features = ["derive"] }
 tracing-subscriber = "0.3.18"
 edc_api = { path = "../edc_api" }
 dsp_api = { path = "../dsp_api" }
+dsp_client = { path = "../dsp_client" }
 odrl = { path = "../odrl" }
 serde_json = "1.0.120"
 tracing = "0.1.40"

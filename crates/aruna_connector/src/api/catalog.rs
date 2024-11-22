@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
+use tokio::sync::Mutex;
 use axum::extract::{Path, Query, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::IntoResponse;
@@ -15,7 +16,7 @@ type SharedState = Arc<Mutex<Catalog>>;
 pub async fn get_catalog(State(state): State<SharedState>, Json(query): Json<Value>) -> impl IntoResponse {
     info!("Get catalog called");
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
     let catalog = state.clone();
 
     debug!("Received Catalog request with query {:#?}", query);
@@ -166,7 +167,7 @@ pub async fn get_dataset(State(state): State<SharedState>, Path(id): Path<String
     info!("Get Dataset called");
     debug!("Received Dataset request for id {:#?}", id.clone());
 
-    let state = state.lock().unwrap();
+    let state = state.lock().await;
 
     let datasets = state.clone().datasets.unwrap();
     for dataset in datasets {
