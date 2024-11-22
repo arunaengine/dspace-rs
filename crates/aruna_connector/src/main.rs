@@ -11,6 +11,8 @@ use axum::routing::{delete, put};
 use tracing::{error, info};
 use dsp_api::catalog::{AbstractDataset, Catalog, DataService, Dataset, Distribution, MultiLanguage, Resource};
 use dsp_api::contract_negotiation::{AbstractPolicyRule, Action, Constraint, Duty, LeftOperand, MessageOffer, Offer, Operator, Permission, PolicyClass, RightOperand, Target};
+use dsp_api::transfer_process::TransferProcess;
+use edc_api::ContractAgreement;
 
 pub mod api {
     pub mod management_catalog;
@@ -250,12 +252,12 @@ async fn main() {
         .with_state(shared_dsp_negotiation_state);
 
     // Shared management states to store
-    let shared_management_catalog_state = Arc::new(Mutex::new(HashMap::new())); // Catalog TODO: Initialize with some data
-    let shared_management_contract_agreement_state = Arc::new(Mutex::new(HashMap::new())); // Contract Agreement
+    let shared_management_catalog_state = initialize_shared_dsp_catalog().await; // Catalog (Management API is using the same dcat Catalog as the DSP Api)
+    let shared_management_contract_agreement_state = Arc::new(Mutex::new(HashMap::<String, ContractAgreement>::new())); // Contract Agreement
     let shared_management_contract_definition_state = Arc::new(Mutex::new(HashMap::new())); // Contract Definition
     let shared_management_contract_negotiation_state = Arc::new(Mutex::new(HashMap::new())); // Contract Negotiation
     let shared_management_policy_definition_state = Arc::new(Mutex::new(HashMap::new())); // Policy Definition
-    let shared_management_transfer_process_state = Arc::new(Mutex::new(HashMap::new())); // Transfer Process
+    let shared_management_transfer_process_state = Arc::new(Mutex::new(HashMap::<String, TransferProcess>::new())); // Transfer Process
     let shared_management_asset_state = Arc::new(Mutex::new(HashMap::new())); // Asset
 
     // Management routes for catalogs

@@ -1,4 +1,10 @@
+use std::collections::HashMap;
+use std::sync::Arc;
 use axum::response::IntoResponse;
+use tokio::sync::Mutex;
+use edc_api::{TransferProcess};
+
+type SharedState = Arc<Mutex<HashMap<String, TransferProcess>>>;
 
 pub(crate) async fn initiate_transfer_process() -> impl IntoResponse {
     unimplemented!()
