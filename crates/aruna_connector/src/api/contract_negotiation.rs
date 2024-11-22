@@ -6,8 +6,9 @@ use axum::{
 };
 use std::{
     collections::HashMap,
-    sync::{Arc, Mutex},
+    sync::{Arc},
 };
+use tokio::sync::Mutex;
 use axum::extract::Path;
 use chrono::Utc;
 use tracing::{error, info};

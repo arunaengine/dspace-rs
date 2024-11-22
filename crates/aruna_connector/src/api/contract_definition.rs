@@ -7,8 +7,9 @@ use tracing::{error, info};
 use std::{
     collections::HashMap,
     net::SocketAddr,
-    sync::{Arc, Mutex},
+    sync::{Arc},
 };
+use tokio::sync::Mutex;
 use axum::response::IntoResponse;
 use axum_macros::debug_handler;
 use chrono::{DateTime, Local, TimeZone, Utc};
