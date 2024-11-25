@@ -104,7 +104,7 @@ pub(crate) async fn update_contract_definition(State(state): State<SharedState>,
     if state.contains_key(&id) {
         let created_at = Utc::now().timestamp();
 
-        let output = input2output(input.clone(), id.clone(), Some(created_at));
+        let output = input2output(input.clone(), id.clone(), Some(created_at)).await;
 
         state.insert(id.clone(), output);
         StatusCode::NO_CONTENT.into_response()
@@ -156,7 +156,7 @@ pub(crate) async fn create_contract_definition(State(state): State<SharedState>,
 
     let created_at = Utc::now().timestamp();
 
-    let output = input2output(input.clone(), id.clone(), Some(created_at));
+    let output = input2output(input.clone(), id.clone(), Some(created_at)).await;
 
     state.insert(id.clone(), output.clone());
 
