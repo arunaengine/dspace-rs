@@ -388,7 +388,7 @@ async fn main() {
         // Management Routes
         .nest("/v2/catalog", management_catalog_route)
         .nest("/v2/contractagreements", management_contract_agreement_route)
-        .nest("/v2/contractdefintions", management_contract_definitions_route)
+        .nest("/v2/contractdefinitions", management_contract_definitions_route)
         .nest("/v2/contractnegotiations", management_contract_negotiations_route)
         .nest("/v2/policydefinitions", management_policy_definition_route)
         .nest("/v2/transferprocesses", management_transfer_process_route)
