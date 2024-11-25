@@ -18,16 +18,19 @@ pub struct PolicyDefinitionOutput {
     /// ODRL policy
     #[serde(rename = "policy", skip_serializing_if = "Option::is_none")]
     pub policy: Option<serde_json::Value>,
+    #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<i64>,
 }
 
 impl PolicyDefinitionOutput {
 
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, policy: Option<serde_json::Value>) -> PolicyDefinitionOutput {
+    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, policy: Option<serde_json::Value>, created_at: Option<i64>) -> PolicyDefinitionOutput {
         PolicyDefinitionOutput {
             context,
             at_id,
             at_type,
             policy,
+            created_at,
         }
     }
 
@@ -37,6 +40,7 @@ impl PolicyDefinitionOutput {
             at_id: None,
             at_type: Some("PolicyDefinition".to_string()),
             policy: None,
+            created_at: None,
         }
     }
 
