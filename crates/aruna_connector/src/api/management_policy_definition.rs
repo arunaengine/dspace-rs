@@ -159,7 +159,7 @@ pub(crate) async fn request_policy_definitions(State(state): State<SharedState>,
 
     let state = state.lock().await;
 
-    // Collect all assets into a vector
+    // Collect all policy definitions into a vector
     let mut output: Vec<PolicyDefinitionOutput> = state.values().cloned().collect();
 
     let offset = query.offset.unwrap_or(0);
