@@ -15,13 +15,13 @@ use edc_api::query_spec::SortOrder;
 
 type SharedState = Arc<Mutex<HashMap<String, PolicyDefinitionOutput>>>;
 
-async fn input2output(input: PolicyDefinitionInput, id: String) -> PolicyDefinitionOutput {
+async fn input2output(input: PolicyDefinitionInput, id: String, created_at: Option<i64>) -> PolicyDefinitionOutput {
     PolicyDefinitionOutput {
         context: Default::default(),
         at_id: Some(id.clone()),
         at_type: input.at_type.clone(),
         policy: Some(input.policy.clone()),
-        created_at: None,
+        created_at: Some(created_at.unwrap_or_else(|| Utc::now().timestamp())),
     }
 }
 
@@ -119,7 +119,7 @@ pub(crate) async fn create_policy_definition(State(state): State<SharedState>, J
 
     let created_at = Utc::now().timestamp();
 
-    let policy_definition = input2output(input.clone(), id.clone()).await;
+    let policy_definition = input2output(input.clone(), id.clone(), Some(created_at)).await;
 
     state.insert(id.clone(), policy_definition.clone());
 
@@ -293,7 +293,7 @@ pub(crate) async fn update_policy_definition(State(state): State<SharedState>, J
     let mut state = state.lock().await;
 
     if state.contains_key(&id) {
-        let policy_definition = input2output(input.clone(), id.clone()).await;
+        let policy_definition = input2output(input.clone(), id.clone(), None).await;
         state.insert(id.clone(), policy_definition);
         StatusCode::NO_CONTENT.into_response()
     } else {
