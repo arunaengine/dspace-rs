@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use tracing::{error, info};
+use tracing::{debug, error, info};
 use std::{
     collections::HashMap,
     net::SocketAddr,
@@ -19,6 +19,52 @@ use edc_api::query_spec::SortOrder;
 
 // Shared state to store contract definitions
 type SharedState = Arc<Mutex<HashMap<String, ContractDefinitionOutput>>>;
+
+async fn input2output(input: ContractDefinitionInput, id: String, created_at: Option<i64>) -> ContractDefinitionOutput {
+    ContractDefinitionOutput {
+        context: input.context,
+        at_id: input.at_id,
+        at_type: input.at_type,
+        access_policy_id: Some(input.access_policy_id),
+        assets_selector: Some(input.assets_selector),
+        contract_policy_id: Some(input.contract_policy_id),
+        created_at: Some(created_at.unwrap_or_else(|| Utc::now().timestamp())),
+    }
+}
+
+fn evaluate_condition(contract: &ContractDefinitionOutput, operand_left: &serde_json::Value, operator: &str, operand_right: &serde_json::Value,) -> bool {
+    let field_name = operand_left.as_str().unwrap_or("");
+
+    match field_name {
+        "@id" => compare_values(contract.at_id.as_deref(), operator, operand_right.as_str()),
+        "@type" => compare_values(contract.at_type.as_deref(), operator, operand_right.as_str()),
+        "accessPolicyId" => compare_values(contract.access_policy_id.as_deref(), operator, operand_right.as_str()),
+        "contractPolicyId" => compare_values(contract.contract_policy_id.as_deref(), operator, operand_right.as_str()),
+        "createdAt" => {
+            if let Some(parsed_value) = operand_right.as_i64() {
+                compare_values(contract.created_at, operator, Some(parsed_value))
+            } else {
+                false
+            }
+        }
+        _ => false, // Unknown field
+    }
+}
+
+fn compare_values<T: PartialOrd>(field_value: Option<T>, operator: &str, operand_right: Option<T>) -> bool {
+    match (field_value, operand_right) {
+        (Some(field_value), Some(operand_right)) => match operator {
+            "=" => field_value == operand_right,
+            "!=" => field_value != operand_right,
+            ">" => field_value > operand_right,
+            ">=" => field_value >= operand_right,
+            "<" => field_value < operand_right,
+            "<=" => field_value <= operand_right,
+            _ => false,
+        },
+        _ => false,
+    }
+}
 
 pub(crate) async fn update_contract_definition(State(state): State<SharedState>, Json(input): Json<ContractDefinitionInput>,) -> impl IntoResponse {
 
@@ -42,28 +88,23 @@ pub(crate) async fn update_contract_definition(State(state): State<SharedState>,
     /// 400 - Request was malformed, e.g. id was null
     /// 404 - A contract definition with the given ID does not exist
 
+    info!("Update Contract Definition called");
+
     if input.at_id.is_none() {
         return (StatusCode::BAD_REQUEST, Json(error!("Request was malformed, id was null"))).into_response();
     }
 
     let id = input.at_id.clone().unwrap();
 
-    info!("Received contract definition update for id {:#?} <> PUT /v2/contractdefinitions/:\n{:#?}\n", id.clone(), input);
+    debug!("Received Contract Definition update for id {:#?}", id.clone());
+    debug!("Update information: {:#?}", input.clone());
 
     let mut state = state.lock().await;
 
     if state.contains_key(&id) {
         let created_at = Utc::now().timestamp();
 
-        let output = ContractDefinitionOutput {
-            context: input.context,
-            at_id: Some(id.clone()),
-            at_type: input.at_type.clone(),
-            access_policy_id: Some(input.access_policy_id.clone()),
-            assets_selector: Some(input.assets_selector.clone()),
-            contract_policy_id: Some(input.contract_policy_id.clone()),
-            created_at: Some(created_at),
-        };
+        let output = input2output(input.clone(), id.clone(), Some(created_at));
 
         state.insert(id.clone(), output);
         StatusCode::NO_CONTENT.into_response()
@@ -102,7 +143,8 @@ pub(crate) async fn create_contract_definition(State(state): State<SharedState>,
     /// 400 - Request was malformed
     /// 404 - Could not create contract definition, because a contract definition with that ID already exists
 
-    info!("Received contract definition <> POST /v2/contractdefinitions:\n{:#?}\n", input);
+    info!("Create Contract Definition called");
+    debug!("Request Body: {:#?}", input.clone());
 
     let mut state = state.lock().await;
 
@@ -114,15 +156,7 @@ pub(crate) async fn create_contract_definition(State(state): State<SharedState>,
 
     let created_at = Utc::now().timestamp();
 
-    let output = ContractDefinitionOutput {
-        context: input.context,
-        at_id: Some(id.clone()),
-        at_type: input.at_type.clone(),
-        access_policy_id: Some(input.access_policy_id.clone()),
-        assets_selector: Some(input.assets_selector.clone()),
-        contract_policy_id: Some(input.contract_policy_id.clone()),
-        created_at: Some(created_at),
-    };
+    let output = input2output(input.clone(), id.clone(), Some(created_at));
 
     state.insert(id.clone(), output.clone());
 
@@ -158,7 +192,8 @@ pub(crate) async fn request_contract_definition(State(state): State<SharedState>
     /// 200 - The contract definitions matching the query
     /// 400 - Request was malformed
 
-    info!("Received contract definition request <> POST /v2/contractdefinitions/request for query:\n{:#?}\n", query);
+    info!("Request Contract Definition called");
+    debug!("Received Contract Definition request for query: {:#?}", query);
 
     let state = state.lock().await;
 
@@ -219,40 +254,6 @@ pub(crate) async fn request_contract_definition(State(state): State<SharedState>
 
 }
 
-fn evaluate_condition(contract: &ContractDefinitionOutput, operand_left: &serde_json::Value, operator: &str, operand_right: &serde_json::Value,) -> bool {
-    let field_name = operand_left.as_str().unwrap_or("");
-
-    match field_name {
-        "@id" => compare_values(contract.at_id.as_deref(), operator, operand_right.as_str()),
-        "@type" => compare_values(contract.at_type.as_deref(), operator, operand_right.as_str()),
-        "accessPolicyId" => compare_values(contract.access_policy_id.as_deref(), operator, operand_right.as_str()),
-        "contractPolicyId" => compare_values(contract.contract_policy_id.as_deref(), operator, operand_right.as_str()),
-        "createdAt" => {
-            if let Some(parsed_value) = operand_right.as_i64() {
-                compare_values(contract.created_at, operator, Some(parsed_value))
-            } else {
-                false
-            }
-        }
-        _ => false, // Unknown field
-    }
-}
-
-fn compare_values<T: PartialOrd>(field_value: Option<T>, operator: &str, operand_right: Option<T>) -> bool {
-    match (field_value, operand_right) {
-        (Some(field_value), Some(operand_right)) => match operator {
-            "=" => field_value == operand_right,
-            "!=" => field_value != operand_right,
-            ">" => field_value > operand_right,
-            ">=" => field_value >= operand_right,
-            "<" => field_value < operand_right,
-            "<=" => field_value <= operand_right,
-            _ => false,
-        },
-        _ => false,
-    }
-}
-
 pub(crate) async fn get_contract_definition(State(state): State<SharedState>, Path(id): Path<String>,) -> impl IntoResponse {
 
     /// Gets a contract definition with the given ID
@@ -269,7 +270,8 @@ pub(crate) async fn get_contract_definition(State(state): State<SharedState>, Pa
     /// 400 - Request was malformed, e.g. id was null
     /// 404 - A contract definition with the given ID does not exist
 
-    info!("Received contract request <> GET /v2/contractdefinitions/{} for id:\n{:#?}\n", id.clone(), id.clone());
+    info!("Get Contract Definition called");
+    debug!("Received Contract Definition request for id: {:#?}", id.clone());
 
     let state = state.lock().await;
     match state.get(&id) {
@@ -294,7 +296,8 @@ pub(crate) async fn delete_contract_definition(State(state): State<SharedState>,
     /// 400 - Request was malformed, e.g. id was null
     /// 404 - A contract definition with the given ID does not exist
 
-    info!("Received contract deletion request <> DELETE /v2/contractdefinitions/{} for id:\n{:#?}\n", id.clone(), id.clone());
+    info!("Delete Contract Definition called");
+    debug!("Received Contract Definition deletion request for Policy Definition with id: {:#?}", id.clone());
 
     let mut state = state.lock().await;
     if state.remove(&id).is_some() {
