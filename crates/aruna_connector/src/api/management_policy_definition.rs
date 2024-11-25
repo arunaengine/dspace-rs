@@ -194,7 +194,7 @@ pub(crate) async fn request_policy_definitions(State(state): State<SharedState>,
     // Filter the output based on the filter_expression
     if !filter_expression.is_empty() {
         output = output.into_iter().filter(|(v)| {
-            filter_expression.iter().all(|criterion| {
+            filter_expression.iter().any(|criterion| {
                 evaluate_condition(v, &criterion.operand_left, &criterion.operator, &criterion.operand_right)
             })
         }).collect();
@@ -355,8 +355,7 @@ pub(crate) async fn delete_policy_definition(State(state): State<SharedState>, P
 
     match response {
         Ok(resp) if resp.status().is_success() => {
-            let contract_definitions: Vec<ContractDefinitionOutput> =
-                resp.json().await.unwrap_or_default();
+            let contract_definitions: Vec<ContractDefinitionOutput> = resp.json().await.unwrap_or_default();
 
             // Check if there are any contract definitions referencing the policy definition
             if !contract_definitions.is_empty() {

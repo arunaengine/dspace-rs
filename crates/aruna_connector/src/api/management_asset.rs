@@ -242,7 +242,7 @@ pub(crate) async fn request_assets(State(state): State<SharedState>, Json(query)
     // Filter the output based on the filter_expression
     if !filter_expression.is_empty() {
         output = output.into_iter().filter(|(v)| {
-            filter_expression.iter().all(|criterion| {
+            filter_expression.iter().any(|criterion| {
                 evaluate_condition(v, &criterion.operand_left, &criterion.operator, &criterion.operand_right)
             })
         }).collect();
