@@ -92,3 +92,15 @@ path = "aruna_connector/catalog_api_test.rs"
 [[test]]
 name = "aruna_connector_negotiation_provider"
 path = "aruna_connector/negotiation_provider_api_test.rs"
+
+[[test]]
+name = "aruna_connector_contract_definition"
+path = "aruna_connector/contract_definition_api_test.rs"
+
+[[test]]
+name = "aruna_connector_policy_definition"
+path = "aruna_connector/policy_definition_api_test.rs"
+
+[[test]]
+name = "aruna_connector_asset_api"
+path = "aruna_connector/asset_api_test.rs"
