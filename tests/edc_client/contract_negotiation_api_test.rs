@@ -40,12 +40,12 @@ mod contract_negotiation_api_initiate_test {
         };
 
         let policy: serde_json::Value = serde_json::json!({
-        "@context": offer.context,
-        "@type": offer.at_type,
-        "@id": offer.at_id,
-        "assigner": offer.assigner,
-        "target": offer.target,
-    });
+            "@context": offer.context,
+            "@type": offer.at_type,
+            "@id": offer.at_id,
+            "assigner": offer.assigner,
+            "target": offer.target,
+        });
 
         let offer_description = ContractOfferDescription {
             at_type: Some("OfferDescription".to_string()),
