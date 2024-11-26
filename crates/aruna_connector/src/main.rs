@@ -253,7 +253,7 @@ async fn main() {
 
     // Shared management states to store
     let shared_management_catalog_state = initialize_shared_dsp_catalog().await; // Catalog (Management API is using the same dcat Catalog as the DSP Api)
-    let shared_management_contract_agreement_state = Arc::new(Mutex::new(HashMap::<String, ContractAgreement>::new())); // Contract Agreement
+    let shared_management_contract_agreement_state = Arc::new(Mutex::new(HashMap::new())); // Contract Agreement
     let shared_management_contract_definition_state = Arc::new(Mutex::new(HashMap::new())); // Contract Definition
     let shared_management_contract_negotiation_state = Arc::new(Mutex::new(HashMap::new())); // Contract Negotiation
     let shared_management_policy_definition_state = Arc::new(Mutex::new(HashMap::new())); // Policy Definition
