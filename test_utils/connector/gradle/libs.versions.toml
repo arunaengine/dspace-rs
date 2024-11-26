@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.8.1"
+edc = "0.8.+"
 shadow = "8.1.1"
 
 [libraries]
@@ -13,6 +13,7 @@ edc-control-api-configuration = { module = "org.eclipse.edc:control-api-configur
 edc-control-plane-api-client = { module = "org.eclipse.edc:control-plane-api-client", version.ref = "edc" }
 edc-control-plane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
 edc-control-plane-edr-receiver = { module = "org.eclipse.edc:edr-store-receiver", version.ref = "edc" }
+edc-core-spi = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
 edc-data-plane-control-api = { module = "org.eclipse.edc:data-plane-control-api", version.ref = "edc" }
 edc-data-plane-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
 edc-data-plane-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
@@ -35,6 +36,8 @@ edc-transfer-data-plane-signaling = { module = "org.eclipse.edc:transfer-data-pl
 edc-transfer-pull-http-receiver = { module = "org.eclipse.edc:transfer-pull-http-receiver", version.ref = "edc" }
 edc-transfer-signaling = { module = "org.eclipse.edc:transfer-data-plane-signaling", version.ref = "edc" }
 edc-validator-data-address-http-data = { module = "org.eclipse.edc:validator-data-address-http-data", version.ref = "edc" }
+edc-validator-spi = { module = "org.eclipse.edc:validator-spi", version.ref = "edc" }
+edc-web-spi = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
