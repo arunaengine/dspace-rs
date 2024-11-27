@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 use tracing::{debug, error, info};
 use uuid::Uuid;
 use dsp_api::transfer_process::TransferRequestMessage;
-use edc_api::{IdResponse, QuerySpec, TransferProcess, TransferRequest};
+use edc_api::{IdResponse, QuerySpec, SuspendTransfer, TransferProcess, TransferRequest};
 use edc_api::query_spec::SortOrder;
 use edc_api::transfer_process::RHashType;
 use edc_api::transfer_state::TransferProcessState;
@@ -292,19 +292,106 @@ pub(crate) async fn get_transfer_process(State(state): State<SharedState>, Path(
 
 }
 
-pub(crate) async fn deprovision_transfer_process_resource() -> impl IntoResponse {
+pub(crate) async fn deprovision_transfer_process_resource(State(state): State<SharedState>, Path(id): Path<String>,) -> impl IntoResponse {
+
+    /// Requests the deprovisioning of resources associated with a transfer process. Due to the asynchronous nature of transfers,
+    /// a successful response only indicates that the request was successfully received.
+    /// This may take a long time, so clients must poll the /{id}/state endpoint to track the state.
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// POST /v2/transferprocesses/{id}/deprovision
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 204 - Request to deprovision the transfer process was successfully received
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
     unimplemented!()
 }
 
-pub(crate) async fn resume_transfer_process() -> impl IntoResponse {
+pub(crate) async fn resume_transfer_process(State(state): State<SharedState>, Path(id): Path<String>,) -> impl IntoResponse {
+
+    /// Requests the resumption of a suspended transfer process. Due to the asynchronous nature of transfers,
+    /// a successful response only indicates that the request was successfully received.
+    /// This may take a long time, so clients must poll the /{id}/state endpoint to track the state.
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// POST /v2/transferprocesses/{id}/resume
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 204 - Request to resume the transfer process was successfully received
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
     unimplemented!()
 }
 
-pub(crate) async fn get_transfer_process_state() -> impl IntoResponse {
-    unimplemented!()
+pub(crate) async fn get_transfer_process_state(State(state): State<SharedState>, Path(id): Path<String>,) -> impl IntoResponse {
+
+    /// Gets the state of a transfer process with the given ID
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// GET /v2/transferprocesses/{id}/state
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 200 - The transfer process's state
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
+    info!("Get Transfer Process's State called");
+    debug!("Received Transfer Process's State request for id: {:#?}", id.clone());
+
+    let state = state.lock().await;
+    match state.get(&id) {
+        Some(output) => (StatusCode::OK, Json(output.0.state.clone())).into_response(),
+        None => (StatusCode::NOT_FOUND, Json(error!("A transfer process with the given ID does not exist"))).into_response(),
+    }
+
 }
 
-pub(crate) async fn suspend_transfer_process() -> impl IntoResponse {
+pub(crate) async fn suspend_transfer_process(State(state): State<SharedState>, Path(id): Path<String>, Json(request_message): Json<SuspendTransfer>,) -> impl IntoResponse {
+
+    /// Requests the suspension of a transfer process. Due to the asynchronous nature of transfers,
+    /// a successful response only indicates that the request was successfully received.
+    /// This may take a long time, so clients must poll the /{id}/state endpoint to track the state.
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// POST /v2/transferprocesses/{id}/suspend
+    ///
+    /// Body:
+    /// {
+    ///   "@context": {
+    ///     "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+    ///   },
+    ///   "@type": "https://w3id.org/edc/v0.0.1/ns/SuspendTransfer",
+    ///   "reason": "a reason to suspend"
+    /// }
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 204 - Request to suspend the transfer process was successfully received
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
     unimplemented!()
 }
 
