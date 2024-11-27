@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::Json;
 use axum::response::IntoResponse;
 use chrono::Utc;
 use serde_json::Value;
 use tokio::sync::Mutex;
-use tracing::{debug, info};
+use tracing::{debug, error, info};
 use uuid::Uuid;
 use dsp_api::transfer_process::TransferRequestMessage;
 use edc_api::{IdResponse, QuerySpec, TransferProcess, TransferRequest};
@@ -264,8 +264,32 @@ pub(crate) async fn request_transfer_processes(State(state): State<SharedState>,
     (StatusCode::OK, Json(output)).into_response()
 }
 
-pub(crate) async fn get_transfer_process() -> impl IntoResponse {
-    unimplemented!()
+pub(crate) async fn get_transfer_process(State(state): State<SharedState>, Path(id): Path<String>,) -> impl IntoResponse {
+
+    /// Gets a transfer process with the given ID
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// GET /v2/transferprocesses/{id}
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 200 - The transfer process
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
+    info!("Get Transfer Process called");
+    debug!("Received Transfer Process request for id: {:#?}", id.clone());
+
+    let state = state.lock().await;
+    match state.get(&id) {
+        Some(output) => (StatusCode::OK, Json(output.0.clone())).into_response(),
+        None => (StatusCode::NOT_FOUND, Json(error!("A Transfer Process with the given ID does not exist"))).into_response(),
+    }
+
 }
 
 pub(crate) async fn deprovision_transfer_process_resource() -> impl IntoResponse {
