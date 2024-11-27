@@ -153,7 +153,7 @@ pub(crate) async fn initiate_transfer_process(headers: HeaderMap, State(state): 
     let mut state = state.lock().await;
     let id = uuid::Uuid::new_v4().to_string();
 
-    let transfer_process = input2output(input).await;
+    let transfer_process = input2output(input.clone()).await;
 
     let consumer_fsm = ConsumerStateMachine::new(headers.get("host").unwrap().to_str().unwrap(), input.counter_party_address.clone().as_str());
 
