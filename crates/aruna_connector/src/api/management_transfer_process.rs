@@ -1,20 +1,20 @@
-use std::collections::HashMap;
-use std::sync::Arc;
 use axum::extract::{Path, State};
 use axum::http::{HeaderMap, StatusCode};
-use axum::Json;
 use axum::response::IntoResponse;
+use axum::Json;
 use chrono::Utc;
-use serde_json::Value;
-use tokio::sync::Mutex;
-use tracing::{debug, error, info};
-use uuid::Uuid;
 use dsp_api::transfer_process::TransferRequestMessage;
-use edc_api::{IdResponse, QuerySpec, SuspendTransfer, TransferProcess, TransferRequest};
 use edc_api::query_spec::SortOrder;
 use edc_api::transfer_process::RHashType;
 use edc_api::transfer_state::TransferProcessState;
+use edc_api::{IdResponse, QuerySpec, SuspendTransfer, TerminateTransfer, TransferProcess, TransferRequest};
 use odrl::functions::state_machine::{ConsumerState, ConsumerStateMachine};
+use serde_json::Value;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use tracing::{debug, error, info};
+use uuid::Uuid;
 
 type SharedState = Arc<Mutex<HashMap<String, (TransferProcess, ConsumerStateMachine<ConsumerState>)>>>;
 
@@ -395,6 +395,57 @@ pub(crate) async fn suspend_transfer_process(State(state): State<SharedState>, P
     unimplemented!()
 }
 
-pub(crate) async fn terminate_transfer_process() -> impl IntoResponse {
-    unimplemented!()
+pub(crate) async fn terminate_transfer_process(headers: HeaderMap, State(state): State<SharedState>, Path(id): Path<String>, Json(termination_request): Json<TerminateTransfer>) -> impl IntoResponse {
+
+    /// Requests the termination of a transfer process. Due to the asynchronous nature of transfers,
+    /// a successful response only indicates that the request was successfully received.
+    /// This may take a long time, so clients must poll the /{id}/state endpoint to track the state.
+    ///
+    /// # Example
+    ///
+    /// Request:
+    /// POST /v2/transferprocesses/{id}/terminate
+    ///
+    /// Body:
+    /// {
+    ///   "@context": {
+    ///     "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+    ///   },
+    ///   "@type": "https://w3id.org/edc/v0.0.1/ns/TerminateTransfer",
+    ///   "reason": "a reason to terminate"
+    /// }
+    ///
+    /// Parameter:
+    /// id: String (required)  - The ID of the transfer process
+    ///
+    /// Responses:
+    /// 204 - Request to terminate the transfer process was successfully received
+    /// 400 - Request was malformed, e.g. id was null
+    /// 404 - A transfer process with the given ID does not exist
+
+    info!("Terminate Transfer Process called");
+
+    let reason = termination_request.reason.clone().unwrap_or_else(|| "No reason provided".to_string());
+
+    debug!("Received Transfer Process termination for id {:#?} with reason {:#?}", id.clone(), reason.clone());
+
+    let mut state = state.lock().await;
+
+    if state.contains_key(&id) {
+        let (transfer_process, csm) = state.get(&id).unwrap();
+
+        // TODO: Add calling of the dsp endpoint
+
+        let mut terminating_tp = transfer_process.clone();
+        let mut terminating_csm = csm.clone();
+
+        terminating_tp.error_detail = Some(reason.clone());
+        terminating_tp.state = Some(TransferProcessState::Terminating);
+        terminating_csm.transition_to_terminating(reason.clone().as_str());
+        state.insert(id.clone(), (terminating_tp.clone(), terminating_csm.clone()));
+        StatusCode::OK.into_response()
+    } else {
+        (StatusCode::NOT_FOUND, Json(error!("A transfer process with the given ID does not exist"))).into_response()
+    }
+
 }
