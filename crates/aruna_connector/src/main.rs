@@ -25,6 +25,7 @@ pub mod api {
 
     pub mod catalog;
     pub mod contract_negotiation_provider;
+    pub mod transfer_process_provider;
 }
 
 use crate::api::management_catalog;
@@ -37,6 +38,7 @@ use crate::api::management_asset;
 
 use crate::api::catalog;
 use crate::api::contract_negotiation_provider as negotiation_provider;
+use crate::api::transfer_process_provider as tp_provider;
 
 async fn debug_route(headers: HeaderMap, Path(path): Path<String>, value: Option<Json<serde_json::Value>>) {
     info!("Debug route called path {:#?} with value: {:#?}\nHeader: {:#?}", path, value, headers);
@@ -234,6 +236,7 @@ async fn main() {
     // Shared dsp states to store
     let shared_dsp_catalog_state = initialize_shared_dsp_catalog().await; // Catalog
     let shared_dsp_negotiation_state = Arc::new(Mutex::new(HashMap::new())); // Contract Negotiation
+    let shared_dsp_transfer_state = Arc::new(Mutex::new(HashMap::new())); // Transfer Process
 
     // Dsp routes for catalogs
     let dsp_catalog_route = Router::new()
@@ -241,8 +244,8 @@ async fn main() {
         .route("/datasets/:id", get(catalog::get_dataset))
         .with_state(shared_dsp_catalog_state);
 
-    // Dsp routes for negotiations
-    let dsp_negotiation_route = Router::new()
+    // Dsp provider routes for negotiations
+    let dsp_provider_negotiation_route = Router::new()
         .route("/:pid", get(negotiation_provider::get_negotiation))
         .route("/request", post(negotiation_provider::request_negotiation))
         .route("/:pid/request", post(negotiation_provider::make_offer))
@@ -251,13 +254,23 @@ async fn main() {
         .route("/:pid/termination", post(negotiation_provider::terminate_negotiation))
         .with_state(shared_dsp_negotiation_state);
 
+    // DSP provider routes for transfer processes
+    let dsp_provider_transfer_route = Router::new()
+        .route("/:pid", get(tp_provider::get_transfer_process))
+        .route("/request", post(tp_provider::request_transfer_processes))
+        .route("/:pid/start", post(tp_provider::start_transfer_process))
+        .route("/:pid/completion", post(tp_provider::complete_transfer_process))
+        .route("/:pid/termination", post(tp_provider::terminate_transfer_process))
+        .route("/:pid/suspension", post(tp_provider::suspend_transfer_process))
+        .with_state(shared_dsp_transfer_state);
+
     // Shared management states to store
     let shared_management_catalog_state = initialize_shared_dsp_catalog().await; // Catalog (Management API is using the same dcat Catalog as the DSP Api)
     let shared_management_contract_agreement_state = Arc::new(Mutex::new(HashMap::new())); // Contract Agreement
     let shared_management_contract_definition_state = Arc::new(Mutex::new(HashMap::new())); // Contract Definition
     let shared_management_contract_negotiation_state = Arc::new(Mutex::new(HashMap::new())); // Contract Negotiation
     let shared_management_policy_definition_state = Arc::new(Mutex::new(HashMap::new())); // Policy Definition
-    let shared_management_transfer_process_state = Arc::new(Mutex::new(HashMap::<String, TransferProcess>::new())); // Transfer Process
+    let shared_management_transfer_process_state = Arc::new(Mutex::new(HashMap::new())); // Transfer Process
     let shared_management_asset_state = Arc::new(Mutex::new(HashMap::new())); // Asset
 
     // Management routes for catalogs
@@ -395,7 +408,8 @@ async fn main() {
         .nest("/v3/assets", management_asset_route)
         // DSP Routes
         .nest("/catalog", dsp_catalog_route)
-        .nest("/negotiations", dsp_negotiation_route)
+        .nest("/negotiations", dsp_provider_negotiation_route)
+        .nest("/transfers", dsp_provider_transfer_route)
         // Unknown Routes
         .route("/*path", get(debug_route).post(debug_route).put(debug_route).delete(debug_route));
 
