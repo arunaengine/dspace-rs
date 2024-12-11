@@ -1,4 +1,5 @@
 use utoipa::ToSchema;
+use crate::model::asset::Asset;
 use crate::model::party::Party;
 use crate::model::rule::*;
 use crate::model::conflict_term::ConflictTerm;
@@ -23,19 +24,22 @@ pub struct SetPolicy {
     pub conflict: Option<ConflictTerm>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub obligation: Vec<Rule>,
+    #[serde(rename = "target", skip_serializing_if = "Option::is_none")]
+    pub target: Option<Box<Asset>>
 
 }
 
 impl SetPolicy {
 
-    pub fn new(uid: IRI, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>) -> Self {
+    pub fn new(uid: IRI, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>, target: Option<Box<Asset>>) -> Self {
         SetPolicy {
             uid,
             rules,
             profiles,
             inherit_from,
             conflict,
-            obligation
+            obligation,
+            target
         }
     }
 
@@ -56,13 +60,15 @@ pub struct OfferPolicy {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub conflict: Option<ConflictTerm>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub obligation: Vec<Rule>
+    pub obligation: Vec<Rule>,
+    #[serde(rename = "target", skip_serializing_if = "Option::is_none")]
+    pub target: Option<Box<Asset>>
 
 }
 
 impl OfferPolicy {
 
-    pub fn new(uid: IRI, assigner: Party, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>) -> Self {
+    pub fn new(uid: IRI, assigner: Party, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>, target: Option<Box<Asset>>) -> Self {
         OfferPolicy {
             uid,
             assigner,
@@ -70,7 +76,8 @@ impl OfferPolicy {
             profiles,
             inherit_from,
             conflict,
-            obligation
+            obligation,
+            target
         }
     }
 
@@ -93,13 +100,15 @@ pub struct AgreementPolicy {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub conflict: Option<ConflictTerm>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub obligation: Vec<Rule>
+    pub obligation: Vec<Rule>,
+    #[serde(rename = "target", skip_serializing_if = "Option::is_none")]
+    pub target: Option<Box<Asset>>
 
 }
 
 impl AgreementPolicy {
 
-    pub fn new(uid: IRI, assigner: Party, assignee: Party, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>) -> Self {
+    pub fn new(uid: IRI, assigner: Party, assignee: Party, rules: Vec<Rule>, profiles: Vec<IRI>, inherit_from: Vec<IRI>, conflict: Option<ConflictTerm>, obligation: Vec<Rule>, target: Option<Box<Asset>>) -> Self {
         AgreementPolicy {
             uid,
             assigner,
@@ -108,7 +117,8 @@ impl AgreementPolicy {
             profiles,
             inherit_from,
             conflict,
-            obligation
+            obligation,
+            target
         }
     }
 
