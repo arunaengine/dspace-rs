@@ -24,6 +24,13 @@ pub enum PartyType {
     PartyCollection(Vec<String>),
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
+#[serde(untagged)]
+pub enum GenericPartyType {
+    Party(Party),
+    PartyCollection(PartyCollection),
+}
+
 impl Default for PartyType {
     fn default() -> PartyType {
         PartyType::Party(vec!["Party".to_string(), "vcard:Individual".to_string()])

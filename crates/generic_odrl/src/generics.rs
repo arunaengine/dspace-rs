@@ -6,6 +6,8 @@ use serde::{Deserialize, Serialize};
 #[serde(untagged)]
 pub enum StringOrX<X> {
     String(String),
+    VecX(Vec<X>),
+    VecString(Vec<String>),
     X(X),
 }
 

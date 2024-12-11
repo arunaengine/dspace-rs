@@ -16,21 +16,28 @@ impl Relation {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
+#[serde(untagged)]
+pub enum AssetType {
+    Asset(Asset),
+    AssetCollection(AssetCollection),
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct AssetCollection {
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "uid", skip_serializing_if = "Option::is_none")]
     pub source: Option<IRI>,
     #[serde(rename = "@type", skip_serializing_if = "Option::is_none")]
     pub edc_type: Option<String>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub refinement: Vec<Constraint>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub refinement: Option<Vec<Constraint>>,
 }
 
 impl AssetCollection {
     pub fn new(
         source: Option<IRI>,
         edc_type: Option<String>,
-        refinement: Vec<Constraint>,
+        refinement: Option<Vec<Constraint>>,
     ) -> AssetCollection {
         AssetCollection {
             source,
