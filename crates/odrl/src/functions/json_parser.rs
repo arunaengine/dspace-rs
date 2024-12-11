@@ -104,7 +104,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
     /* Parse policy type */
     if let Some(type_) = policy.get("@type") {
         if type_ == "set" || type_ == "Set"{
-            let set_policy: Policy = Policy::SetPolicy(SetPolicy::new(policy_uid, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+            let set_policy: Policy = Policy::SetPolicy(SetPolicy::new(policy_uid, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
             policy_obj = set_policy;
         } else if type_ == "offer" || type_ == "Offer" {
             if policy.is_object() {
@@ -115,7 +115,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                         if perm.get("assigner").is_some() {
                             let assigner_uid = perm.get("assigner").ok_or("No assigner field").unwrap();
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -126,7 +126,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                         if proh.get("assigner").is_some() {
                             let assigner_uid = proh.get("assigner").ok_or("No assigner field").unwrap();
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -137,7 +137,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                         if duty.get("assigner").is_some() {
                             let assigner_uid = duty.get("assigner").ok_or("No assigner field").unwrap();
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -148,7 +148,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                         if obli.get("assigner").is_some() {
                             let assigner_uid = obli.get("assigner").ok_or("No assigner field").unwrap();
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -157,7 +157,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
             } else if policy.is_array() {
                 let assigner_uid = policy.get("assigner").ok_or("No assigner field").unwrap();
                 let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                 policy_obj = offer_policy;
             }
         }
@@ -171,7 +171,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
                             let assignee_uid = perm.get("assignee").ok_or("No assignee field").unwrap();
                             let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -184,7 +184,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
                             let assignee_uid = proh.get("assignee").ok_or("No assignee field").unwrap();
                             let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -197,7 +197,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
                             let assignee_uid = duty.get("assignee").ok_or("No assignee field").unwrap();
                             let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -210,7 +210,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                             let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
                             let assignee_uid = obli.get("assignee").ok_or("No assignee field").unwrap();
                             let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -221,7 +221,7 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                 let assigner = Party::new(Some(assigner_uid.to_string()), vec![], Function::Assigner, None);
                 let assignee_uid = policy.get("assignee").ok_or("No assignee field").unwrap();
                 let assignee = Party::new(Some(assignee_uid.to_string()), vec![], Function::Assignee, None);
-                let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None));
+                let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
                 policy_obj = agreement_policy;
             }
         } else {
