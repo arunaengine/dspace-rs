@@ -13,7 +13,7 @@ use odrl::model::type_alias::IRI;
 
 // Validate required fields depending on provided type
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub struct Policy {
 
     #[serde(rename = "@context", skip_serializing_if = "Option::is_none")]
