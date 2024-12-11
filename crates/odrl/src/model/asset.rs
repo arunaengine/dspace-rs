@@ -1,3 +1,4 @@
+use utoipa::ToSchema;
 use crate::model::policy::Policy;
 use crate::model::constraint::Constraint;
 use crate::model::type_alias::IRI;
@@ -5,7 +6,7 @@ use crate::model::type_alias::IRI;
 extern crate edc_api as api;
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Relation {
 
     pub target: Box<Asset>,
@@ -22,7 +23,7 @@ impl Relation {
 
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct AssetCollection {
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -46,7 +47,7 @@ impl AssetCollection {
 
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Asset {
 
     // Based on the ODRL model

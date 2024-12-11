@@ -1,3 +1,4 @@
+use utoipa::ToSchema;
 use crate::model::party::Party;
 use crate::model::rule::*;
 use crate::model::conflict_term::ConflictTerm;
@@ -8,7 +9,7 @@ use crate::model::type_alias::IRI;
 
 
 /// Default Policy of type Set
-#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, ToSchema)]
 pub struct SetPolicy {
 
     pub uid: IRI,
@@ -40,7 +41,7 @@ impl SetPolicy {
 
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, ToSchema)]
 pub struct OfferPolicy {
 
     pub uid: IRI,
@@ -75,7 +76,7 @@ impl OfferPolicy {
 
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, ToSchema)]
 pub struct AgreementPolicy {
 
     pub uid: IRI,
@@ -114,7 +115,7 @@ impl AgreementPolicy {
 }
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum Policy {
 
     SetPolicy(SetPolicy),

@@ -25,6 +25,7 @@ tokio = { version = "1.38.0", features = ["rt", "rt-multi-thread", "macros"] }
 edc_api = { path = "../edc_api" }
 edc_client = { path = "../edc_client" }
 edc_server = { path = "../edc_server" }
+utoipa = "5.2.0"
 [dependencies.reqwest]
 version = "^0.12.5"
 features = ["json", "multipart"]

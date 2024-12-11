@@ -1,8 +1,9 @@
+use utoipa::ToSchema;
 use crate::model::constraint::Constraint;
 use crate::model::type_alias::IRI;
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum Function {
 
     #[serde(rename = "assigner")]
@@ -18,7 +19,7 @@ impl Default for Function {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum PartyType {
 
     #[serde(rename = "Party")]
@@ -34,7 +35,7 @@ impl Default for PartyType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Party {
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -62,7 +63,7 @@ impl Party {
 }
 
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct PartyCollection {
 
     #[serde(skip_serializing_if = "Option::is_none")]

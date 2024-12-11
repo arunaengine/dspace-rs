@@ -1,6 +1,7 @@
+use utoipa::ToSchema;
 use crate::model::type_alias::IRI;
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum LeftOperand {
 
     Literal(String),
@@ -15,7 +16,7 @@ impl Default for LeftOperand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum Operator {
 
     #[serde(rename = "eq")]
@@ -51,7 +52,7 @@ impl Default for Operator {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum RightOperand {
 
     Literal(String),
@@ -66,7 +67,7 @@ impl Default for RightOperand {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Constraint {
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -110,7 +111,7 @@ impl Constraint {
 
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum LogicalOperator {
 
     #[serde(rename = "or")]
@@ -130,7 +131,7 @@ impl Default for LogicalOperator {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct LogicalConstraint {
 
     #[serde(skip_serializing_if = "Option::is_none")]
