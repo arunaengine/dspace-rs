@@ -30,18 +30,18 @@ pub struct GenericPolicy {
     pub target: Option<StringOrX<Box<Asset>>>,
     #[serde(rename = "action", skip_serializing_if = "Option::is_none")]
     pub action: Option<StringOrX<Action>>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub permission: Vec<Permission>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub prohibition: Vec<Prohibition>,
-    #[serde(rename = "profile", skip_serializing_if = "Vec::is_empty")]
-    pub profiles: Vec<IRI>,
-    #[serde(rename = "inheritFrom", skip_serializing_if = "Vec::is_empty")]
-    pub inherit_from: Vec<IRI>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub permission: Option<Vec<Permission>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub prohibition: Option<Vec<Prohibition>>,
+    #[serde(rename = "profile", skip_serializing_if = "Option::is_none")]
+    pub profiles: Option<StringOrX<Vec<IRI>>>,
+    #[serde(rename = "inheritFrom", skip_serializing_if = "Option::is_none")]
+    pub inherit_from: Option<Vec<IRI>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub conflict: Option<ConflictTerm>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub obligation: Vec<Obligation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub obligation: Option<Vec<Obligation>>,
 }
 
 impl GenericPolicy {
@@ -53,12 +53,12 @@ impl GenericPolicy {
         assignee: Option<StringOrX<Party>>,
         target: Option<StringOrX<Box<Asset>>>,
         action: Option<StringOrX<Action>>,
-        permission: Vec<Permission>,
-        prohibition: Vec<Prohibition>,
-        profiles: Vec<IRI>,
-        inherit_from: Vec<IRI>,
+        permission: Option<Vec<Permission>>,
+        prohibition: Option<Vec<Prohibition>>,
+        profiles: Option<StringOrX<Vec<IRI>>>,
+        inherit_from: Option<Vec<IRI>>,
         conflict: Option<ConflictTerm>,
-        obligation: Vec<Obligation>,
+        obligation: Option<Vec<Obligation>>,
     ) -> Self {
         GenericPolicy {
             context,
@@ -83,7 +83,7 @@ mod tests {
     use serde_json::json;
 
     #[test]
-    fn deserialize_examples() {
+    fn deserialize_example1() {
         let example1 = r#"
             {
     "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -97,7 +97,9 @@ mod tests {
         "#;
 
         serde_json::from_str::<super::GenericPolicy>(example1).unwrap();
-
+    }
+    #[test]
+    fn deserialize_example2() {
         let example2 = r#"
     {
     "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -112,5 +114,24 @@ mod tests {
 }   
     "#;
         serde_json::from_str::<super::GenericPolicy>(example2).unwrap();
+    }
+
+    #[test]
+    fn deserialize_example3() {
+        let example = r#"
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Agreement",
+    "uid": "http://example.com/policy:1012",
+    "profile": "http://example.com/odrl:profile:01",
+    "permission": [{
+        "target": "http://example.com/asset:9898.movie",
+        "assigner": "http://example.com/party:org:abc",
+        "assignee": "http://example.com/party:person:billie",
+        "action": "play"
+    }]
+} 
+    "#;
+        serde_json::from_str::<super::GenericPolicy>(example).unwrap();
     }
 }

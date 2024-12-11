@@ -22,12 +22,12 @@ pub struct Permission {
     pub action: StringOrX<Action>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<Asset>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub function: Vec<Party>,
-    #[serde(rename = "failure", skip_serializing_if = "Vec::is_empty")]
-    pub failures: Vec<Rule>,
-    #[serde(rename = "constraint", skip_serializing_if = "Vec::is_empty")]
-    pub constraints: Vec<Constraint>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub function: Option<Vec<Party>>,
+    #[serde(rename = "failure", skip_serializing_if = "Option::is_none")]
+    pub failures: Option<Vec<Rule>>,
+    #[serde(rename = "constraint", skip_serializing_if = "Option::is_none")]
+    pub constraints: Option<Vec<Constraint>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target: Option<StringOrX<Asset>>,
@@ -35,8 +35,8 @@ pub struct Permission {
     pub assigner: Option<StringOrX<Party>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee: Option<StringOrX<Party>>,
-    #[serde(rename = "duty", skip_serializing_if = "Vec::is_empty")]
-    pub duties: Vec<Duty>,
+    #[serde(rename = "duty", skip_serializing_if = "Option::is_none")]
+    pub duties: Option<Vec<Duty>>,
 }
 
 impl Permission {
@@ -44,13 +44,13 @@ impl Permission {
         uid: Option<IRI>,
         action: StringOrX<Action>,
         relation: Option<Asset>,
-        function: Vec<Party>,
-        failures: Vec<Rule>,
-        constraints: Vec<Constraint>,
+        function: Option<Vec<Party>>,
+        failures: Option<Vec<Rule>>,
+        constraints: Option<Vec<Constraint>>,
         target: Option<StringOrX<Asset>>,
         assigner: Option<StringOrX<Party>>,
         assignee: Option<StringOrX<Party>>,
-        duties: Vec<Duty>,
+        duties: Option<Vec<Duty>>,
     ) -> Self {
         Permission {
             uid,
@@ -74,20 +74,20 @@ pub struct Prohibition {
     pub action: StringOrX<Action>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<Asset>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub function: Vec<Party>,
-    #[serde(rename = "failure", skip_serializing_if = "Vec::is_empty")]
-    pub failures: Vec<Rule>,
-    #[serde(rename = "constraint", skip_serializing_if = "Vec::is_empty")]
-    pub constraints: Vec<Constraint>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub function: Option<Vec<Party>>,
+    #[serde(rename = "failure", skip_serializing_if = "Option::is_none")]
+    pub failures: Option<Vec<Rule>>,
+    #[serde(rename = "constraint", skip_serializing_if = "Option::is_none")]
+    pub constraints: Option<Vec<Constraint>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target: Option<StringOrX<Asset>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assigner: Option<StringOrX<Party>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee: Option<StringOrX<Party>>,
-    #[serde(rename = "remedy", skip_serializing_if = "Vec::is_empty")]
-    pub remedies: Vec<Duty>,
+    #[serde(rename = "remedy", skip_serializing_if = "Option::is_none")]
+    pub remedies: Option<Vec<Duty>>,
 }
 
 impl Prohibition {
@@ -95,13 +95,13 @@ impl Prohibition {
         uid: Option<IRI>,
         action: StringOrX<Action>,
         relation: Option<Asset>,
-        function: Vec<Party>,
-        failures: Vec<Rule>,
-        constraints: Vec<Constraint>,
+        function: Option<Vec<Party>>,
+        failures: Option<Vec<Rule>>,
+        constraints: Option<Vec<Constraint>>,
         target: Option<StringOrX<Asset>>,
         assigner: Option<StringOrX<Party>>,
         assignee: Option<StringOrX<Party>>,
-        remedies: Vec<Duty>,
+        remedies: Option<Vec<Duty>>,
     ) -> Self {
         Prohibition {
             uid,
@@ -125,12 +125,12 @@ pub struct Duty {
     pub action: StringOrX<Action>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<Asset>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub function: Vec<Party>,
-    #[serde(rename = "failure", skip_serializing_if = "Vec::is_empty")]
-    pub failures: Vec<Rule>,
-    #[serde(rename = "constraint", skip_serializing_if = "Vec::is_empty")]
-    pub constraints: Vec<Constraint>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub function: Option<Vec<Party>>,
+    #[serde(rename = "failure", skip_serializing_if = "Option::is_none")]
+    pub failures: Option<Vec<Rule>>,
+    #[serde(rename = "constraint", skip_serializing_if = "Option::is_none")]
+    pub constraints: Option<Vec<Constraint>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target: Option<StringOrX<Asset>>,
@@ -138,8 +138,8 @@ pub struct Duty {
     pub assigner: Option<StringOrX<Party>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee: Option<StringOrX<Party>>,
-    #[serde(rename = "consequence", skip_serializing_if = "Vec::is_empty")]
-    pub consequences: Vec<Duty>,
+    #[serde(rename = "consequence", skip_serializing_if = "Option::is_none")]
+    pub consequences: Option<Vec<Duty>>,
     #[serde(skip_serializing)]
     pub pre_condition: Option<Vec<Duty>>,
 }
@@ -149,13 +149,13 @@ impl Duty {
         uid: Option<IRI>,
         action: StringOrX<Action>,
         relation: Option<Asset>,
-        function: Vec<Party>,
-        failures: Vec<Rule>,
-        constraints: Vec<Constraint>,
+        function: Option<Vec<Party>>,
+        failures: Option<Vec<Rule>>,
+        constraints: Option<Vec<Constraint>>,
         target: Option<StringOrX<Asset>>,
         assigner: Option<StringOrX<Party>>,
         assignee: Option<StringOrX<Party>>,
-        consequences: Vec<Duty>,
+        consequences: Option<Vec<Duty>>,
         pre_condition: Option<Vec<Duty>>,
     ) -> Self {
         Duty {
