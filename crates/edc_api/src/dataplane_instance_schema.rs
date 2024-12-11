@@ -9,8 +9,9 @@
 
 
 use serde::{Deserialize, Deserializer};
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
 pub struct DataPlaneInstanceSchema {
     #[serde(rename = "@context")]
     pub context: std::collections::HashMap<String, serde_json::Value>,

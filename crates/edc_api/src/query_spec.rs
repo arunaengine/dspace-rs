@@ -6,8 +6,9 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
 pub struct QuerySpec {
     #[serde(rename = "@context", skip_serializing_if = "Option::is_none")]
     pub at_context: Option<std::collections::HashMap<String, serde_json::Value>>,
@@ -54,7 +55,7 @@ impl QuerySpec {
 
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum SortOrder {
     #[serde(rename = "ASC")]
     Asc,

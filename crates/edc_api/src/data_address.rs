@@ -6,8 +6,9 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct DataAddress {
     #[serde(rename = "@type", skip_serializing_if = "Option::is_none")]
     pub at_type: Option<String>,

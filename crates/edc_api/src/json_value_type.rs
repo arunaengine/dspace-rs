@@ -6,9 +6,10 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
 /// Definition is declared but never used in management api version 0.7.0
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum ValueType {
     #[serde(rename = "ARRAY")]
     Array,

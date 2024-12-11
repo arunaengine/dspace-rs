@@ -6,8 +6,9 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
 #[deprecated(note = "HealthStatus is deprecated since management api version 0.5.2-SNAPSHOT")]
 pub struct HealthStatus {
     #[serde(rename = "componentResults", skip_serializing_if = "Option::is_none")]

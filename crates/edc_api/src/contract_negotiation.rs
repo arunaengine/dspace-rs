@@ -6,8 +6,9 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
 pub struct ContractNegotiation {
     #[serde(rename = "@context")]
     pub context: std::collections::HashMap<String, serde_json::Value>,
@@ -75,7 +76,7 @@ impl ContractNegotiation {
 
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum EnumType {
     #[serde(rename = "CONSUMER")]
     Consumer,
@@ -89,12 +90,12 @@ impl Default for EnumType {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub struct NegotiationState {
     pub state: ContractNegotiationState,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum ContractNegotiationState {
     #[serde(rename = "INITIAL")]
     Initial,        // Consumer and Provider

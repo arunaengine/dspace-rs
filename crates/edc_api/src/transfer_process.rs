@@ -8,10 +8,11 @@
  */
 
 use serde_with::{formats::PreferMany, serde_as, OneOrMany};
+use utoipa::ToSchema;
 use crate::transfer_state::TransferProcessState;
 
 #[serde_as]
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
 pub struct TransferProcess {
     #[serde(rename = "@context")]
     pub context: std::collections::HashMap<String, serde_json::Value>,
@@ -101,7 +102,7 @@ impl TransferProcess {
 
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum RHashType {
     #[serde(rename = "CONSUMER")]
     Consumer,

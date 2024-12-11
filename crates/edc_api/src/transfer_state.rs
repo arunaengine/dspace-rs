@@ -6,15 +6,16 @@
  * Version: 0.7.0
  *
  */
+use utoipa::ToSchema;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub struct TransferState {
     #[serde(rename = "state")]
     pub state: TransferProcessState,
 }
 
 /// https://eclipse-edc.github.io/docs/#/submodule/Connector/docs/developer/transfer-process
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
 pub enum TransferProcessState {
     #[serde(rename = "INITIAL")]
     Initial,
