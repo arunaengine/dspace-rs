@@ -7,13 +7,11 @@
  *
  */
 
-
 use reqwest;
 
-use crate::ResponseContent;
+use super::{configuration, Error};
 use crate::utils::remove_prefixes_from_value;
-use super::{Error, configuration};
-
+use crate::ResponseContent;
 
 /// struct for typed errors of method [`query_edrs`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -41,18 +39,22 @@ pub enum GetEDRDataAddressError {
     UnknownValue(serde_json::Value),
 }
 
-
 /// Request all Edr entries according to a particular query
-pub async fn query_edrs(configuration: &configuration::Configuration, query_spec: Option<edc_api::QuerySpec>) -> Result<Vec<edc_api::EndpointDataReferenceEntry>, Error<QueryEDRsError>> {
+pub async fn query_edrs(
+    configuration: &configuration::Configuration,
+    query_spec: Option<edc_api::QuerySpec>,
+) -> Result<Vec<edc_api::EndpointDataReferenceEntry>, Error<QueryEDRsError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!("{}/v1/edrs/request", local_var_configuration.base_path);
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&query_spec);
 
@@ -67,23 +69,37 @@ pub async fn query_edrs(configuration: &configuration::Configuration, query_spec
         val = remove_prefixes_from_value(val);
         serde_json::from_value(val).map_err(Error::from)
     } else {
-        let local_var_entity: Option<QueryEDRsError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<QueryEDRsError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
 
 /// Removes an EDR entry given the transfer process ID
-pub async fn delete_edr(configuration: &configuration::Configuration, transfer_process_id: &str) -> Result<(), Error<DeleteEDRError>> {
+pub async fn delete_edr(
+    configuration: &configuration::Configuration,
+    transfer_process_id: &str,
+) -> Result<(), Error<DeleteEDRError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/v1/edrs/{transferProcessId}", local_var_configuration.base_path, transferProcessId= crate::urlencode(transfer_process_id));
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
+    let local_var_uri_str = format!(
+        "{}/v1/edrs/{transferProcessId}",
+        local_var_configuration.base_path,
+        transferProcessId = crate::urlencode(transfer_process_id)
+    );
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -95,23 +111,37 @@ pub async fn delete_edr(configuration: &configuration::Configuration, transfer_p
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         Ok(())
     } else {
-        let local_var_entity: Option<DeleteEDRError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<DeleteEDRError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
 
 /// Gets the EDR data address with the given transfer process ID
-pub async fn get_edr_data_address(configuration: &configuration::Configuration, transfer_process_id: &str) -> Result<edc_api::DataAddress, Error<GetEDRDataAddressError>> {
+pub async fn get_edr_data_address(
+    configuration: &configuration::Configuration,
+    transfer_process_id: &str,
+) -> Result<edc_api::DataAddress, Error<GetEDRDataAddressError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/v1/edrs/{transferProcessId}/dataaddress", local_var_configuration.base_path, transferProcessId= crate::urlencode(transfer_process_id));
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+    let local_var_uri_str = format!(
+        "{}/v1/edrs/{transferProcessId}/dataaddress",
+        local_var_configuration.base_path,
+        transferProcessId = crate::urlencode(transfer_process_id)
+    );
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -123,8 +153,13 @@ pub async fn get_edr_data_address(configuration: &configuration::Configuration, 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetEDRDataAddressError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<GetEDRDataAddressError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }

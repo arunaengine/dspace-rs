@@ -21,8 +21,12 @@ pub struct SecretOutput {
 }
 
 impl SecretOutput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, at_id: Option<String>, value: String) -> SecretOutput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        at_id: Option<String>,
+        value: String,
+    ) -> SecretOutput {
         SecretOutput {
             context,
             at_type,
@@ -33,11 +37,13 @@ impl SecretOutput {
 
     pub fn default() -> SecretOutput {
         SecretOutput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("Secret".to_string()),
             at_id: None,
             value: String::new(),
         }
     }
-
 }

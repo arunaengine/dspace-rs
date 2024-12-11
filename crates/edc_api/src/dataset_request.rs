@@ -16,7 +16,10 @@ pub struct DatasetRequest {
     pub at_type: Option<String>,
     #[serde(rename = "@id", skip_serializing_if = "Option::is_none")]
     pub at_id: Option<String>,
-    #[serde(rename = "counterPartyAddress", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "counterPartyAddress",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub counter_party_address: Option<String>,
     #[serde(rename = "counterPartyId", skip_serializing_if = "Option::is_none")]
     pub counter_party_id: Option<String>,
@@ -27,9 +30,15 @@ pub struct DatasetRequest {
 }
 
 impl DatasetRequest {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, at_id: Option<String>, counter_party_address: Option<String>,
-               counter_party_id: Option<String>, protocol: Option<String>, query_spec: Option<crate::QuerySpec>) -> DatasetRequest {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        at_id: Option<String>,
+        counter_party_address: Option<String>,
+        counter_party_id: Option<String>,
+        protocol: Option<String>,
+        query_spec: Option<crate::QuerySpec>,
+    ) -> DatasetRequest {
         DatasetRequest {
             context,
             at_type,
@@ -43,7 +52,10 @@ impl DatasetRequest {
 
     pub fn default() -> DatasetRequest {
         DatasetRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("DatasetRequest".to_string()),
             at_id: None,
             counter_party_address: None,
@@ -52,5 +64,4 @@ impl DatasetRequest {
             query_spec: None,
         }
     }
-
 }

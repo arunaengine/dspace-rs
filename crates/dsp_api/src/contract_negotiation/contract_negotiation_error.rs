@@ -18,9 +18,9 @@ pub struct ContractNegotiationError {
     #[serde(rename = "dspace:consumerPid")] // The CN unique id on Consumer side.
     pub consumer_pid: String,
     #[serde(rename = "dspace:code", skip_serializing_if = "Option::is_none")]
-    pub code: Option<String>,               // An optional implementation-specific error code.
+    pub code: Option<String>, // An optional implementation-specific error code.
     #[serde(rename = "dspace:reason", skip_serializing_if = "Vec::is_empty")]
-    pub reason: Vec<String>,                // An optional array of implementation-specific error objects.
+    pub reason: Vec<String>, // An optional array of implementation-specific error objects.
     #[serde(rename = "dct:description", skip_serializing_if = "Option::is_none")]
     pub description: Option<Vec<DctDescription>>,
 }
@@ -34,9 +34,15 @@ pub struct DctDescription {
 }
 
 impl ContractNegotiationError {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               code: Option<String>, reason: Vec<String>, description: Option<Vec<DctDescription>>) -> ContractNegotiationError {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        code: Option<String>,
+        reason: Vec<String>,
+        description: Option<Vec<DctDescription>>,
+    ) -> ContractNegotiationError {
         ContractNegotiationError {
             context,
             dsp_type,
@@ -50,7 +56,12 @@ impl ContractNegotiationError {
 
     pub fn default() -> ContractNegotiationError {
         ContractNegotiationError {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/dspace/2024/1/context.json".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(
+                    "https://w3id.org/dspace/2024/1/context.json".to_string(),
+                ),
+            )]),
             dsp_type: "dspace:ContractNegotiationError".to_string(),
             provider_pid: String::new(),
             consumer_pid: String::new(),
@@ -59,14 +70,10 @@ impl ContractNegotiationError {
             description: None,
         }
     }
-
 }
 
 impl DctDescription {
     pub fn new(language: String, value: String) -> DctDescription {
-        DctDescription {
-            language,
-            value,
-        }
+        DctDescription { language, value }
     }
 }

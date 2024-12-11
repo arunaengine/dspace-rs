@@ -22,8 +22,12 @@ pub struct PolicyDefinitionInput {
 }
 
 impl PolicyDefinitionInput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, policy: serde_json::Value) -> PolicyDefinitionInput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        policy: serde_json::Value,
+    ) -> PolicyDefinitionInput {
         PolicyDefinitionInput {
             context,
             at_id,
@@ -34,11 +38,13 @@ impl PolicyDefinitionInput {
 
     pub fn default() -> PolicyDefinitionInput {
         PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::Value::Null,
         }
     }
-
 }

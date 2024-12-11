@@ -32,8 +32,13 @@ pub struct TransferStartMessage {
 }
 
 impl TransferStartMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               data_address: DataAddress) -> TransferStartMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        data_address: DataAddress,
+    ) -> TransferStartMessage {
         TransferStartMessage {
             context,
             dsp_type,

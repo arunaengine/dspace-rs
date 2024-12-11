@@ -16,17 +16,11 @@ pub struct JsonValue {
 }
 
 impl JsonValue {
-
     pub fn new(value_type: Option<crate::ValueType>) -> JsonValue {
-        JsonValue {
-            value_type,
-        }
+        JsonValue { value_type }
     }
 
     pub fn default() -> JsonValue {
-        JsonValue {
-            value_type: None,
-        }
+        JsonValue { value_type: None }
     }
-
 }

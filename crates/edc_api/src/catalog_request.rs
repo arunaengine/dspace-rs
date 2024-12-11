@@ -25,9 +25,14 @@ pub struct CatalogRequest {
 }
 
 impl CatalogRequest {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, counter_party_address: String, counter_party_id: Option<String>,
-               protocol: String, query_spec: Option<crate::QuerySpec>) -> CatalogRequest {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        counter_party_address: String,
+        counter_party_id: Option<String>,
+        protocol: String,
+        query_spec: Option<crate::QuerySpec>,
+    ) -> CatalogRequest {
         CatalogRequest {
             context,
             at_type,
@@ -40,7 +45,10 @@ impl CatalogRequest {
 
     pub fn default() -> CatalogRequest {
         CatalogRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("CatalogRequest".to_string()),
             counter_party_address: String::new(),
             counter_party_id: None,
@@ -48,5 +56,4 @@ impl CatalogRequest {
             query_spec: None,
         }
     }
-
 }

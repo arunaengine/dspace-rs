@@ -23,8 +23,12 @@ pub struct ContractOfferDescription {
 }
 
 impl ContractOfferDescription {
-
-    pub fn new(at_type: Option<String>, asset_id: Option<String>, offer_id: Option<String>, policy: Option<serde_json::Value>) -> ContractOfferDescription {
+    pub fn new(
+        at_type: Option<String>,
+        asset_id: Option<String>,
+        offer_id: Option<String>,
+        policy: Option<serde_json::Value>,
+    ) -> ContractOfferDescription {
         ContractOfferDescription {
             at_type,
             asset_id,
@@ -41,5 +45,4 @@ impl ContractOfferDescription {
             policy: None,
         }
     }
-
 }

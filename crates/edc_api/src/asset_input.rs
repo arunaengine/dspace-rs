@@ -25,10 +25,14 @@ pub struct AssetInput {
 }
 
 impl AssetInput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>,
-               data_address: crate::DataAddress, private_properties: Option<std::collections::HashMap<String, serde_json::Value>>,
-               properties: std::collections::HashMap<String, serde_json::Value>) -> AssetInput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        data_address: crate::DataAddress,
+        private_properties: Option<std::collections::HashMap<String, serde_json::Value>>,
+        properties: std::collections::HashMap<String, serde_json::Value>,
+    ) -> AssetInput {
         AssetInput {
             context,
             at_id,
@@ -41,7 +45,10 @@ impl AssetInput {
 
     pub fn default() -> AssetInput {
         AssetInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("Asset".to_string()),
             data_address: Box::new(crate::DataAddress::default()),
@@ -49,5 +56,4 @@ impl AssetInput {
             properties: std::collections::HashMap::new(),
         }
     }
-
 }

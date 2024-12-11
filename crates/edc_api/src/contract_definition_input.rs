@@ -25,9 +25,14 @@ pub struct ContractDefinitionInput {
 }
 
 impl ContractDefinitionInput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>,
-               access_policy_id: String, assets_selector: Vec<crate::Criterion>, contract_policy_id: String) -> ContractDefinitionInput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        access_policy_id: String,
+        assets_selector: Vec<crate::Criterion>,
+        contract_policy_id: String,
+    ) -> ContractDefinitionInput {
         ContractDefinitionInput {
             context,
             at_id,
@@ -40,7 +45,10 @@ impl ContractDefinitionInput {
 
     pub fn default() -> ContractDefinitionInput {
         ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("ContractDefinition".to_string()),
             access_policy_id: String::new(),
@@ -48,5 +56,4 @@ impl ContractDefinitionInput {
             contract_policy_id: String::new(),
         }
     }
-
 }

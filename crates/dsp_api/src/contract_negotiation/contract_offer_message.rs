@@ -35,8 +35,14 @@ pub struct ContractOfferMessage {
 }
 
 impl ContractOfferMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: Option<String>,
-               offer: MessageOffer, callback_address: String) -> ContractOfferMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: Option<String>,
+        offer: MessageOffer,
+        callback_address: String,
+    ) -> ContractOfferMessage {
         ContractOfferMessage {
             context,
             dsp_type,

@@ -25,8 +25,12 @@ pub struct ContractAgreementVerificationMessage {
 }
 
 impl ContractAgreementVerificationMessage {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String) -> ContractAgreementVerificationMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+    ) -> ContractAgreementVerificationMessage {
         ContractAgreementVerificationMessage {
             context,
             dsp_type,
@@ -37,7 +41,12 @@ impl ContractAgreementVerificationMessage {
 
     pub fn default() -> ContractAgreementVerificationMessage {
         ContractAgreementVerificationMessage {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/dspace/2024/1/context.json".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(
+                    "https://w3id.org/dspace/2024/1/context.json".to_string(),
+                ),
+            )]),
             dsp_type: "dspace:ContractAgreementVerificationMessage".to_string(),
             provider_pid: String::new(),
             consumer_pid: String::new(),

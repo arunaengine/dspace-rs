@@ -7,7 +7,10 @@ mod contract_agreement_api_test {
     extern crate edc_client;
     extern crate odrl;
 
-    use crate::common::{setup_consumer_configuration, setup_provider_configuration, setup_random_contract_negotiation, wait_for_negotiation_state};
+    use crate::common::{
+        setup_consumer_configuration, setup_provider_configuration,
+        setup_random_contract_negotiation, wait_for_negotiation_state,
+    };
     use edc_api::NegotiationState;
     use edc_client::{contract_agreement_api, contract_negotiation_api, Error};
     use odrl::name_spaces::EDC_NS;
@@ -16,17 +19,27 @@ mod contract_agreement_api_test {
     async fn test_get_agreement_by_id() {
         let provider = setup_provider_configuration();
         let consumer = setup_consumer_configuration();
-        let (negotiation_id, asset_id) = setup_random_contract_negotiation(&consumer, &provider).await;
+        let (negotiation_id, asset_id) =
+            setup_random_contract_negotiation(&consumer, &provider).await;
 
         wait_for_negotiation_state(
             &consumer,
             &negotiation_id,
-            NegotiationState { state: edc_api::ContractNegotiationState::Finalized },
-        ).await;
+            NegotiationState {
+                state: edc_api::ContractNegotiationState::Finalized,
+            },
+        )
+        .await;
 
-        let agreement_id = contract_negotiation_api::get_negotiation(&consumer, &negotiation_id).await.unwrap().contract_agreement_id.unwrap();
+        let agreement_id = contract_negotiation_api::get_negotiation(&consumer, &negotiation_id)
+            .await
+            .unwrap()
+            .contract_agreement_id
+            .unwrap();
 
-        let agreement = contract_agreement_api::get_agreement_by_id(&consumer, &agreement_id).await.unwrap();
+        let agreement = contract_agreement_api::get_agreement_by_id(&consumer, &agreement_id)
+            .await
+            .unwrap();
 
         assert_eq!(agreement_id, agreement.clone().at_id.unwrap());
     }
@@ -42,8 +55,10 @@ mod contract_agreement_api_test {
         match agreement {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
-            _ => panic!("Expected Status Code 404, because there is no agreement with the given id"),
+            }
+            _ => {
+                panic!("Expected Status Code 404, because there is no agreement with the given id")
+            }
         }
     }
 
@@ -51,17 +66,28 @@ mod contract_agreement_api_test {
     async fn test_get_negotiation_by_id() {
         let provider = setup_provider_configuration();
         let consumer = setup_consumer_configuration();
-        let (negotiation_id, asset_id) = setup_random_contract_negotiation(&consumer, &provider).await;
+        let (negotiation_id, asset_id) =
+            setup_random_contract_negotiation(&consumer, &provider).await;
 
         wait_for_negotiation_state(
             &consumer,
             &negotiation_id,
-            NegotiationState { state: edc_api::ContractNegotiationState::Finalized },
-        ).await;
+            NegotiationState {
+                state: edc_api::ContractNegotiationState::Finalized,
+            },
+        )
+        .await;
 
-        let agreement_id = contract_negotiation_api::get_negotiation(&consumer, &negotiation_id).await.unwrap().contract_agreement_id.unwrap();
+        let agreement_id = contract_negotiation_api::get_negotiation(&consumer, &negotiation_id)
+            .await
+            .unwrap()
+            .contract_agreement_id
+            .unwrap();
 
-        let negotiation = contract_agreement_api::get_negotiation_by_agreement_id(&consumer, &agreement_id).await.unwrap();
+        let negotiation =
+            contract_agreement_api::get_negotiation_by_agreement_id(&consumer, &agreement_id)
+                .await
+                .unwrap();
 
         assert_eq!(negotiation_id, negotiation.clone().at_id.unwrap());
     }
@@ -71,14 +97,18 @@ mod contract_agreement_api_test {
         let consumer = setup_consumer_configuration();
         let negotiation_id = "wrong_id".to_string();
 
-        let negotiation = contract_agreement_api::get_negotiation_by_agreement_id(&consumer, &negotiation_id).await;
+        let negotiation =
+            contract_agreement_api::get_negotiation_by_agreement_id(&consumer, &negotiation_id)
+                .await;
 
         assert!(negotiation.is_err());
         match negotiation {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
-            _ => panic!("Expected Status Code 404, because there is no negotiation with the given id"),
+            }
+            _ => panic!(
+                "Expected Status Code 404, because there is no negotiation with the given id"
+            ),
         }
     }
 
@@ -87,21 +117,29 @@ mod contract_agreement_api_test {
         let provider = setup_provider_configuration();
         let consumer = setup_consumer_configuration();
 
-        let (contract_negotiation_id, asset_id) = setup_random_contract_negotiation(&consumer, &provider).await;
+        let (contract_negotiation_id, asset_id) =
+            setup_random_contract_negotiation(&consumer, &provider).await;
 
         wait_for_negotiation_state(
             &consumer,
             &contract_negotiation_id,
-            NegotiationState { state: edc_api::ContractNegotiationState::Finalized },
-        ).await;
+            NegotiationState {
+                state: edc_api::ContractNegotiationState::Finalized,
+            },
+        )
+        .await;
 
-        let (second_negotiation_id, second_asset_id) = setup_random_contract_negotiation(&consumer, &provider).await;
+        let (second_negotiation_id, second_asset_id) =
+            setup_random_contract_negotiation(&consumer, &provider).await;
 
         wait_for_negotiation_state(
             &consumer,
             &second_negotiation_id,
-            NegotiationState { state: edc_api::ContractNegotiationState::Finalized },
-        ).await;
+            NegotiationState {
+                state: edc_api::ContractNegotiationState::Finalized,
+            },
+        )
+        .await;
 
         // Filter for specific asset id
         let criterion = edc_api::Criterion {
@@ -112,7 +150,10 @@ mod contract_agreement_api_test {
         };
 
         let query = edc_api::QuerySpec {
-            at_context: Some(std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))])),
+            at_context: Some(std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )])),
             at_type: Some("QuerySpec".to_string()),
             filter_expression: vec![criterion],
             limit: None,
@@ -121,10 +162,11 @@ mod contract_agreement_api_test {
             sort_order: None,
         };
 
-        let agreements = contract_agreement_api::query_all_agreements(&consumer, Some(query)).await.unwrap();
+        let agreements = contract_agreement_api::query_all_agreements(&consumer, Some(query))
+            .await
+            .unwrap();
         assert_eq!(1, agreements.len());
         let agreement_asset_id = agreements.get(0).unwrap().asset_id.clone().unwrap();
         assert_eq!(asset_id, agreement_asset_id);
     }
-
 }

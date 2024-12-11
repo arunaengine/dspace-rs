@@ -27,10 +27,15 @@ pub struct AssetOutput {
 }
 
 impl AssetOutput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>,
-               created_at: Option<i64>, data_address: crate::DataAddress, private_properties: Option<std::collections::HashMap<String, serde_json::Value>>,
-               properties: Option<std::collections::HashMap<String, serde_json::Value>>) -> AssetOutput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        created_at: Option<i64>,
+        data_address: crate::DataAddress,
+        private_properties: Option<std::collections::HashMap<String, serde_json::Value>>,
+        properties: Option<std::collections::HashMap<String, serde_json::Value>>,
+    ) -> AssetOutput {
         AssetOutput {
             context,
             at_id,
@@ -44,7 +49,10 @@ impl AssetOutput {
 
     pub fn default() -> AssetOutput {
         AssetOutput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("Asset".to_string()),
             created_at: None,
@@ -53,5 +61,4 @@ impl AssetOutput {
             properties: None,
         }
     }
-
 }

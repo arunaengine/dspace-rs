@@ -18,9 +18,15 @@ pub struct ContractNegotiation {
     pub at_type: Option<String>,
     #[serde(rename = "callbackAddresses", skip_serializing_if = "Option::is_none")]
     pub callback_addresses: Option<Vec<crate::CallbackAddress>>,
-    #[serde(rename = "contractAgreementId", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "contractAgreementId",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub contract_agreement_id: Option<String>,
-    #[serde(rename = "counterPartyAddress", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "counterPartyAddress",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub counter_party_address: Option<String>,
     #[serde(rename = "counterPartyId", skip_serializing_if = "Option::is_none")]
     pub counter_party_id: Option<String>,
@@ -37,10 +43,20 @@ pub struct ContractNegotiation {
 }
 
 impl ContractNegotiation {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, callback_addresses: Option<Vec<crate::CallbackAddress>>,
-               contract_agreement_id: Option<String>, counter_party_address: Option<String>, counter_party_id: Option<String>, error_detail: Option<String>, protocol: Option<String>,
-               state: ContractNegotiationState, r#type: Option<EnumType>, created_at: Option<i64>) -> ContractNegotiation {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        callback_addresses: Option<Vec<crate::CallbackAddress>>,
+        contract_agreement_id: Option<String>,
+        counter_party_address: Option<String>,
+        counter_party_id: Option<String>,
+        error_detail: Option<String>,
+        protocol: Option<String>,
+        state: ContractNegotiationState,
+        r#type: Option<EnumType>,
+        created_at: Option<i64>,
+    ) -> ContractNegotiation {
         ContractNegotiation {
             context,
             at_id,
@@ -59,7 +75,10 @@ impl ContractNegotiation {
 
     pub fn default() -> ContractNegotiation {
         ContractNegotiation {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("ContractNegotiation".to_string()),
             callback_addresses: None,
@@ -73,10 +92,11 @@ impl ContractNegotiation {
             created_at: None,
         }
     }
-
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema,
+)]
 pub enum EnumType {
     #[serde(rename = "CONSUMER")]
     Consumer,
@@ -90,43 +110,47 @@ impl Default for EnumType {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema,
+)]
 pub struct NegotiationState {
     pub state: ContractNegotiationState,
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema,
+)]
 pub enum ContractNegotiationState {
     #[serde(rename = "INITIAL")]
-    Initial,        // Consumer and Provider
+    Initial, // Consumer and Provider
     #[serde(rename = "REQUESTING")]
-    Requesting,     // Consumer
+    Requesting, // Consumer
     #[serde(rename = "REQUESTED")]
-    Requested,      // Consumer and Provider
+    Requested, // Consumer and Provider
     #[serde(rename = "OFFERING")]
-    Offering,       // Provider
+    Offering, // Provider
     #[serde(rename = "OFFERED")]
-    Offered,        // Consumer and Provider
+    Offered, // Consumer and Provider
     #[serde(rename = "ACCEPTING")]
-    Accepting,      // Consumer
+    Accepting, // Consumer
     #[serde(rename = "ACCEPTED")]
-    Accepted,       // Consumer and Provider
+    Accepted, // Consumer and Provider
     #[serde(rename = "AGREEING")]
-    Agreeing,       // Provider
+    Agreeing, // Provider
     #[serde(rename = "AGREED")]
-    Agreed,         // Consumer and Provider
+    Agreed, // Consumer and Provider
     #[serde(rename = "VERIFYING")]
-    Verifying,      // Consumer
+    Verifying, // Consumer
     #[serde(rename = "VERIFIED")]
-    Verified,       // Consumer and Provider
+    Verified, // Consumer and Provider
     #[serde(rename = "FINALIZING")]
-    Finalizing,     // Provider
+    Finalizing, // Provider
     #[serde(rename = "FINALIZED")]
-    Finalized,      // Consumer and Provider
+    Finalized, // Consumer and Provider
     #[serde(rename = "TERMINATING")]
-    Terminating,    // Consumer and Provider
+    Terminating, // Consumer and Provider
     #[serde(rename = "TERMINATED")]
-    Terminated,     // Consumer and Provider
+    Terminated, // Consumer and Provider
 }
 
 impl Default for ContractNegotiationState {

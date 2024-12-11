@@ -18,12 +18,10 @@ pub struct HealthStatus {
 }
 
 impl HealthStatus {
-
     pub fn new() -> HealthStatus {
         HealthStatus {
             component_results: None,
             is_system_healthy: None,
         }
     }
-
 }

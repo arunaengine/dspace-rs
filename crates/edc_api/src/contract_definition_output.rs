@@ -27,9 +27,15 @@ pub struct ContractDefinitionOutput {
 }
 
 impl ContractDefinitionOutput {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, access_policy_id: Option<String>,
-               assets_selector: Option<Vec<crate::Criterion>>, contract_policy_id: Option<String>, created_at: Option<i64>) -> ContractDefinitionOutput {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        access_policy_id: Option<String>,
+        assets_selector: Option<Vec<crate::Criterion>>,
+        contract_policy_id: Option<String>,
+        created_at: Option<i64>,
+    ) -> ContractDefinitionOutput {
         ContractDefinitionOutput {
             context,
             at_id,
@@ -43,7 +49,10 @@ impl ContractDefinitionOutput {
 
     pub fn default() -> ContractDefinitionOutput {
         ContractDefinitionOutput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("ContractDefinition".to_string()),
             access_policy_id: None,
@@ -52,5 +61,4 @@ impl ContractDefinitionOutput {
             created_at: None,
         }
     }
-
 }

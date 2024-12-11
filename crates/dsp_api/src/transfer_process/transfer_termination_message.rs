@@ -26,7 +26,14 @@ pub struct TransferTerminationMessage {
 }
 
 impl TransferTerminationMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String, code: Option<String>, reason: Vec<String>) -> TransferTerminationMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        code: Option<String>,
+        reason: Vec<String>,
+    ) -> TransferTerminationMessage {
         TransferTerminationMessage {
             context,
             dsp_type,

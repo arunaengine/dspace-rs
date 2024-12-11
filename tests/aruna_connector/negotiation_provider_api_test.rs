@@ -1,12 +1,15 @@
 mod common;
 
 mod aruna_connector_negotiation_provider_api_test {
-    use tokio::time::sleep;
-    use crate::common::{setup_dsp_provider_configuration, setup_management_consumer, setup_provider_configuration, DATASPACE_PROTOCOL, PROVIDER_ID};
+    use crate::common::{
+        setup_dsp_provider_configuration, setup_management_consumer, setup_provider_configuration,
+        DATASPACE_PROTOCOL, PROVIDER_ID,
+    };
     use dsp_client::contract_negotiation::negotiation_provider_api;
     use edc_api::{AssetInput, ContractOfferDescription, Offer};
     use edc_client::{asset_api, contract_negotiation_api};
     use odrl::name_spaces::LD_NS;
+    use tokio::time::sleep;
     use uuid::Uuid;
 
     #[tokio::test]
@@ -25,21 +28,29 @@ mod aruna_connector_negotiation_provider_api_test {
 
     #[tokio::test]
     async fn request_negotiation() {
-
         let consumer = setup_management_consumer().await;
         let provider = setup_provider_configuration();
 
         let asset_id = Uuid::new_v4().to_string();
 
         let asset_input = AssetInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: Some(asset_id.clone()),
             at_type: Some("Asset".to_string()),
             data_address: Box::new(Default::default()),
             private_properties: None,
             properties: std::collections::HashMap::from([
-                ("name".to_string(), serde_json::Value::String("test".to_string())),
-                ("foo".to_string(), serde_json::Value::String("bar".to_string()))
+                (
+                    "name".to_string(),
+                    serde_json::Value::String("test".to_string()),
+                ),
+                (
+                    "foo".to_string(),
+                    serde_json::Value::String("bar".to_string()),
+                ),
             ]),
         };
 
@@ -73,7 +84,10 @@ mod aruna_connector_negotiation_provider_api_test {
         };
 
         let contract_request = edc_api::ContractRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("ContractRequest".to_string()),
             callback_addresses: None,
             connector_address: None,
@@ -84,7 +98,12 @@ mod aruna_connector_negotiation_provider_api_test {
             provider_id: None,
         };
 
-        let contract_negotiation_response = contract_negotiation_api::initiate_contract_negotiation(&consumer, Some(contract_request)).await;
+        let contract_negotiation_response =
+            contract_negotiation_api::initiate_contract_negotiation(
+                &consumer,
+                Some(contract_request),
+            )
+            .await;
 
         match contract_negotiation_response {
             Ok(response) => {
@@ -101,7 +120,7 @@ mod aruna_connector_negotiation_provider_api_test {
     async fn accept_negotiation() {
         unimplemented!()
     }
-    
+
     #[tokio::test]
     async fn terminate_negotiation() {
         let consumer = setup_management_consumer().await;
@@ -110,14 +129,23 @@ mod aruna_connector_negotiation_provider_api_test {
         let asset_id = Uuid::new_v4().to_string();
 
         let asset_input = AssetInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: Some(asset_id.clone()),
             at_type: Some("Asset".to_string()),
             data_address: Box::new(Default::default()),
             private_properties: None,
             properties: std::collections::HashMap::from([
-                ("name".to_string(), serde_json::Value::String("test".to_string())),
-                ("foo".to_string(), serde_json::Value::String("bar".to_string()))
+                (
+                    "name".to_string(),
+                    serde_json::Value::String("test".to_string()),
+                ),
+                (
+                    "foo".to_string(),
+                    serde_json::Value::String("bar".to_string()),
+                ),
             ]),
         };
 
@@ -153,7 +181,10 @@ mod aruna_connector_negotiation_provider_api_test {
         };
 
         let contract_request = edc_api::ContractRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("ContractRequest".to_string()),
             callback_addresses: None,
             connector_address: None,
@@ -164,7 +195,12 @@ mod aruna_connector_negotiation_provider_api_test {
             provider_id: None,
         };
 
-        let contract_negotiation_response = contract_negotiation_api::initiate_contract_negotiation(&consumer, Some(contract_request)).await;
+        let contract_negotiation_response =
+            contract_negotiation_api::initiate_contract_negotiation(
+                &consumer,
+                Some(contract_request),
+            )
+            .await;
 
         match contract_negotiation_response {
             Ok(response) => {
@@ -176,15 +212,23 @@ mod aruna_connector_negotiation_provider_api_test {
                 sleep(std::time::Duration::from_secs(5)).await;
 
                 let cn_pid = response.at_id.clone().unwrap();
-                
+
                 let termination_request = edc_api::TerminateNegotiationSchema {
-                    context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+                    context: std::collections::HashMap::from([(
+                        "@vocab".to_string(),
+                        serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+                    )]),
                     at_id: cn_pid.clone(),
                     at_type: None,
                     reason: Some("Terminating for testing purposes".to_string()),
                 };
 
-                let terminate_response = contract_negotiation_api::terminate_negotiation(&consumer, cn_pid.clone().as_str(), Some(termination_request)).await;
+                let terminate_response = contract_negotiation_api::terminate_negotiation(
+                    &consumer,
+                    cn_pid.clone().as_str(),
+                    Some(termination_request),
+                )
+                .await;
 
                 println!("Termination: {:#?}", terminate_response);
                 assert!(terminate_response.is_ok());

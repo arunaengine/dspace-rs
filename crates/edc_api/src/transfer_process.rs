@@ -7,9 +7,9 @@
  *
  */
 
+use crate::transfer_state::TransferProcessState;
 use serde_with::{formats::PreferMany, serde_as, OneOrMany};
 use utoipa::ToSchema;
-use crate::transfer_state::TransferProcessState;
 
 #[serde_as]
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize, ToSchema)]
@@ -29,7 +29,10 @@ pub struct TransferProcess {
     pub asset_id: Option<String>,
     #[serde(rename = "contractId", skip_serializing_if = "Option::is_none")]
     pub contract_agreement_id: Option<String>,
-    #[serde(rename = "counterPartyAddress", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "counterPartyAddress",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub counter_party_address: Option<String>,
     #[serde(rename = "counterPartyId", skip_serializing_if = "Option::is_none")]
     pub counter_party_id: Option<String>,
@@ -52,11 +55,25 @@ pub struct TransferProcess {
 }
 
 impl TransferProcess {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, at_id: Option<String>, correlation_id: Option<String>, callback_addresses: Vec<crate::CallbackAddress>,
-               asset_id: Option<String>, contract_agreement_id: Option<String>, counter_party_address: Option<String>, counter_party_id: Option<String>, data_destination: Option<Box<crate::DataAddress>>,
-               error_detail: Option<String>, private_properties: Option<::std::collections::HashMap<String, String>>, protocol: Option<String>, state: Option<TransferProcessState>,
-               state_timestamp: Option<i64>, transfer_type: Option<String>, r#type: Option<RHashType>) -> TransferProcess {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        at_id: Option<String>,
+        correlation_id: Option<String>,
+        callback_addresses: Vec<crate::CallbackAddress>,
+        asset_id: Option<String>,
+        contract_agreement_id: Option<String>,
+        counter_party_address: Option<String>,
+        counter_party_id: Option<String>,
+        data_destination: Option<Box<crate::DataAddress>>,
+        error_detail: Option<String>,
+        private_properties: Option<::std::collections::HashMap<String, String>>,
+        protocol: Option<String>,
+        state: Option<TransferProcessState>,
+        state_timestamp: Option<i64>,
+        transfer_type: Option<String>,
+        r#type: Option<RHashType>,
+    ) -> TransferProcess {
         TransferProcess {
             context,
             at_type,
@@ -80,7 +97,10 @@ impl TransferProcess {
 
     pub fn default() -> TransferProcess {
         TransferProcess {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("TransferProcess".to_string()),
             at_id: None,
             correlation_id: None,
@@ -99,10 +119,11 @@ impl TransferProcess {
             r#type: None,
         }
     }
-
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema,
+)]
 pub enum RHashType {
     #[serde(rename = "CONSUMER")]
     Consumer,

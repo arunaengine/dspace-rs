@@ -22,8 +22,15 @@ pub struct ApiKey {
 }
 
 impl Configuration {
-    pub fn new(base_path: String, user_agent: Option<String>, client: reqwest::Client, basic_auth: Option<BasicAuth>, oauth_access_token: Option<String>,
-               bearer_access_token: Option<String>, api_key: Option<ApiKey>) -> Configuration {
+    pub fn new(
+        base_path: String,
+        user_agent: Option<String>,
+        client: reqwest::Client,
+        basic_auth: Option<BasicAuth>,
+        oauth_access_token: Option<String>,
+        bearer_access_token: Option<String>,
+        api_key: Option<ApiKey>,
+    ) -> Configuration {
         Configuration {
             base_path,
             user_agent,

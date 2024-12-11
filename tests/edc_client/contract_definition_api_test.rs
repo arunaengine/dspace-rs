@@ -17,9 +17,12 @@ mod contract_definition_api_create_test {
         let provider = setup_provider_configuration();
 
         let definition_id = Uuid::new_v4().to_string();
-        
+
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "1".to_string(),
@@ -27,7 +30,12 @@ mod contract_definition_api_create_test {
             contract_policy_id: "1".to_string(),
         };
 
-        let response = contract_definition_api::create_contract_definition(&provider, Some(contract_definition)).await.unwrap();
+        let response = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition),
+        )
+        .await
+        .unwrap();
 
         assert_eq!(definition_id.clone(), response.at_id.unwrap());
     }
@@ -39,7 +47,10 @@ mod contract_definition_api_create_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: String::new(),
@@ -47,13 +58,17 @@ mod contract_definition_api_create_test {
             contract_policy_id: String::new(),
         };
 
-        let response = contract_definition_api::create_contract_definition(&provider, Some(contract_definition)).await;
+        let response = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition),
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::BAD_REQUEST);
-            },
+            }
             _ => panic!("Expected Status Code 400, because the contract definition is malformed"),
         }
     }
@@ -65,7 +80,10 @@ mod contract_definition_api_create_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "duplicate".to_string(),
@@ -73,20 +91,28 @@ mod contract_definition_api_create_test {
             contract_policy_id: "duplicate".to_string(),
         };
 
-        let response = contract_definition_api::create_contract_definition(&provider, Some(contract_definition.clone())).await.unwrap();
+        let response = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition.clone()),
+        )
+        .await
+        .unwrap();
 
         assert_eq!(definition_id.clone(), response.at_id.unwrap());
 
-        let response = contract_definition_api::create_contract_definition(&provider, Some(contract_definition.clone())).await;
+        let response = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition.clone()),
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::CONFLICT);
-            },
+            }
             _ => panic!("Expected Status Code 409, because the contract definition already exists"),
         }
-
     }
 }
 
@@ -109,7 +135,10 @@ mod contract_definition_api_delete_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "delete-me".to_string(),
@@ -117,11 +146,17 @@ mod contract_definition_api_delete_test {
             contract_policy_id: "delete-me".to_string(),
         };
 
-        let response = contract_definition_api::create_contract_definition(&provider, Some(contract_definition)).await.unwrap();
+        let response = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition),
+        )
+        .await
+        .unwrap();
 
         assert_eq!(definition_id.clone(), response.at_id.unwrap());
 
-        let response = contract_definition_api::delete_contract_definition(&provider, &definition_id).await;
+        let response =
+            contract_definition_api::delete_contract_definition(&provider, &definition_id).await;
 
         assert!(response.is_ok());
     }
@@ -132,13 +167,14 @@ mod contract_definition_api_delete_test {
 
         let definition_id = "delete-me".to_string();
 
-        let response = contract_definition_api::delete_contract_definition(&provider, &definition_id).await;
+        let response =
+            contract_definition_api::delete_contract_definition(&provider, &definition_id).await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the contract definition does not exist"),
         }
     }
@@ -163,7 +199,10 @@ mod contract_definition_api_get_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "get-me".to_string(),
@@ -171,13 +210,27 @@ mod contract_definition_api_get_test {
             contract_policy_id: "get-me".to_string(),
         };
 
-        let created = contract_definition_api::create_contract_definition(&provider, Some(contract_definition.clone())).await.unwrap();
+        let created = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition.clone()),
+        )
+        .await
+        .unwrap();
 
-        let pulled = contract_definition_api::get_contract_definition(&provider, &definition_id.clone()).await.unwrap();
+        let pulled =
+            contract_definition_api::get_contract_definition(&provider, &definition_id.clone())
+                .await
+                .unwrap();
 
         assert_eq!(definition_id.clone(), pulled.at_id.unwrap());
-        assert_eq!(contract_definition.access_policy_id, pulled.access_policy_id.unwrap());
-        assert_eq!(contract_definition.contract_policy_id, pulled.contract_policy_id.unwrap());
+        assert_eq!(
+            contract_definition.access_policy_id,
+            pulled.access_policy_id.unwrap()
+        );
+        assert_eq!(
+            contract_definition.contract_policy_id,
+            pulled.contract_policy_id.unwrap()
+        );
     }
 
     #[tokio::test]
@@ -186,13 +239,14 @@ mod contract_definition_api_get_test {
 
         let definition_id = "get-me-not".to_string();
 
-        let response = contract_definition_api::get_contract_definition(&provider, &definition_id).await;
+        let response =
+            contract_definition_api::get_contract_definition(&provider, &definition_id).await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the contract definition does not exist"),
         }
     }
@@ -217,7 +271,10 @@ mod contract_definition_api_query_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "query-me".to_string(),
@@ -228,7 +285,10 @@ mod contract_definition_api_query_test {
         let second_id = Uuid::new_v4().to_string();
 
         let second_contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(second_id.clone()),
             at_type: None,
             access_policy_id: "query-me-not".to_string(),
@@ -236,8 +296,18 @@ mod contract_definition_api_query_test {
             contract_policy_id: "query-me-not".to_string(),
         };
 
-        let first_created = contract_definition_api::create_contract_definition(&provider, Some(contract_definition.clone())).await.unwrap();
-        let second_created = contract_definition_api::create_contract_definition(&provider, Some(second_contract_definition.clone())).await.unwrap();
+        let first_created = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition.clone()),
+        )
+        .await
+        .unwrap();
+        let second_created = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(second_contract_definition.clone()),
+        )
+        .await
+        .unwrap();
 
         let criterion = edc_api::Criterion {
             at_type: None,
@@ -247,7 +317,10 @@ mod contract_definition_api_query_test {
         };
 
         let query = edc_api::QuerySpec {
-            at_context: Some(std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))])),
+            at_context: Some(std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )])),
             at_type: Some("QuerySpec".to_string()),
             filter_expression: vec![criterion],
             limit: None,
@@ -256,7 +329,10 @@ mod contract_definition_api_query_test {
             sort_order: None,
         };
 
-        let definitions = contract_definition_api::query_all_contract_definitions(&provider, Some(query)).await.unwrap();
+        let definitions =
+            contract_definition_api::query_all_contract_definitions(&provider, Some(query))
+                .await
+                .unwrap();
         assert_eq!(1, definitions.len());
         let queried_id = definitions.first().unwrap().at_id.clone().unwrap();
         assert_eq!(definition_id.clone(), queried_id);
@@ -282,7 +358,10 @@ mod contract_definition_api_update_test {
         let definition_id = Uuid::new_v4().to_string();
 
         let contract_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "update-me".to_string(),
@@ -290,10 +369,18 @@ mod contract_definition_api_update_test {
             contract_policy_id: "update-me".to_string(),
         };
 
-        let created = contract_definition_api::create_contract_definition(&provider, Some(contract_definition.clone())).await.unwrap();
+        let created = contract_definition_api::create_contract_definition(
+            &provider,
+            Some(contract_definition.clone()),
+        )
+        .await
+        .unwrap();
 
         let updated_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "updated".to_string(),
@@ -301,15 +388,28 @@ mod contract_definition_api_update_test {
             contract_policy_id: "updated".to_string(),
         };
 
-        let updated = contract_definition_api::update_contract_definition(&provider, Some(updated_definition.clone())).await;
+        let updated = contract_definition_api::update_contract_definition(
+            &provider,
+            Some(updated_definition.clone()),
+        )
+        .await;
 
         assert!(updated.is_ok());
 
-        let pulled_update = contract_definition_api::get_contract_definition(&provider, &definition_id.clone()).await.unwrap();
+        let pulled_update =
+            contract_definition_api::get_contract_definition(&provider, &definition_id.clone())
+                .await
+                .unwrap();
 
         assert_eq!(definition_id.clone(), pulled_update.at_id.unwrap());
-        assert_eq!(updated_definition.access_policy_id, pulled_update.access_policy_id.unwrap());
-        assert_eq!(updated_definition.contract_policy_id, pulled_update.contract_policy_id.unwrap());
+        assert_eq!(
+            updated_definition.access_policy_id,
+            pulled_update.access_policy_id.unwrap()
+        );
+        assert_eq!(
+            updated_definition.contract_policy_id,
+            pulled_update.contract_policy_id.unwrap()
+        );
     }
 
     #[tokio::test]
@@ -319,7 +419,10 @@ mod contract_definition_api_update_test {
         let definition_id = "update-me-not".to_string();
 
         let updated_definition = edc_api::ContractDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(definition_id.clone()),
             at_type: None,
             access_policy_id: "updated".to_string(),
@@ -327,13 +430,17 @@ mod contract_definition_api_update_test {
             contract_policy_id: "updated".to_string(),
         };
 
-        let updated = contract_definition_api::update_contract_definition(&provider, Some(updated_definition.clone())).await;
+        let updated = contract_definition_api::update_contract_definition(
+            &provider,
+            Some(updated_definition.clone()),
+        )
+        .await;
 
         assert!(updated.is_err());
         match updated {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the contract definition does not exist"),
         }
     }

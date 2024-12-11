@@ -27,9 +27,15 @@ pub struct QuerySpec {
 }
 
 impl QuerySpec {
-
-    pub fn new(at_context: Option<std::collections::HashMap<String, serde_json::Value>>, at_type: Option<String>, filter_expression: Vec<crate::Criterion>,
-               limit: Option<i32>, offset: Option<i32>, sort_field: Option<String>, sort_order: Option<SortOrder>) -> QuerySpec {
+    pub fn new(
+        at_context: Option<std::collections::HashMap<String, serde_json::Value>>,
+        at_type: Option<String>,
+        filter_expression: Vec<crate::Criterion>,
+        limit: Option<i32>,
+        offset: Option<i32>,
+        sort_field: Option<String>,
+        sort_order: Option<SortOrder>,
+    ) -> QuerySpec {
         QuerySpec {
             at_context,
             at_type,
@@ -43,7 +49,10 @@ impl QuerySpec {
 
     pub fn default() -> Self {
         QuerySpec {
-            at_context: Some(std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))])),
+            at_context: Some(std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )])),
             at_type: Some("QuerySpec".to_string()),
             filter_expression: vec![],
             limit: Some(10),
@@ -52,10 +61,11 @@ impl QuerySpec {
             sort_order: Some(SortOrder::Desc),
         }
     }
-
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema)]
+#[derive(
+    Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize, ToSchema,
+)]
 pub enum SortOrder {
     #[serde(rename = "ASC")]
     Asc,
@@ -68,4 +78,3 @@ impl Default for SortOrder {
         Self::Asc
     }
 }
-

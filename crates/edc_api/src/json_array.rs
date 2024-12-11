@@ -20,12 +20,15 @@ pub struct JsonArray {
 }
 
 impl JsonArray {
-
-    pub fn new(empty: Option<bool>, value_type: Option<crate::ValueType>, items: Option<Vec<crate::json_value::JsonValue>>) -> JsonArray {
+    pub fn new(
+        empty: Option<bool>,
+        value_type: Option<crate::ValueType>,
+        items: Option<Vec<crate::json_value::JsonValue>>,
+    ) -> JsonArray {
         JsonArray {
             empty,
             value_type,
-            items
+            items,
         }
     }
 
@@ -33,8 +36,7 @@ impl JsonArray {
         JsonArray {
             empty: None,
             value_type: None,
-            items: None
+            items: None,
         }
     }
-
 }

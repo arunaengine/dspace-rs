@@ -23,8 +23,13 @@ pub struct TerminateTransfer {
 }
 
 impl TerminateTransfer {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, reason: Option<String>, provider_id: Option<String>, transfer_id: Option<String>) -> TerminateTransfer {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        reason: Option<String>,
+        provider_id: Option<String>,
+        transfer_id: Option<String>,
+    ) -> TerminateTransfer {
         TerminateTransfer {
             context,
             at_type,
@@ -36,12 +41,14 @@ impl TerminateTransfer {
 
     pub fn default() -> TerminateTransfer {
         TerminateTransfer {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("TerminateTransfer".to_string()),
             reason: None,
             provider_id: None,
             transfer_id: None,
         }
     }
-
 }

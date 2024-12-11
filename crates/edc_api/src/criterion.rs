@@ -21,8 +21,12 @@ pub struct Criterion {
 }
 
 impl Criterion {
-
-    pub fn new(at_type: Option<String>, operand_left: serde_json::Value, operand_right: serde_json::Value, operator: String) -> Criterion {
+    pub fn new(
+        at_type: Option<String>,
+        operand_left: serde_json::Value,
+        operand_right: serde_json::Value,
+        operator: String,
+    ) -> Criterion {
         Criterion {
             at_type,
             operand_left,
@@ -39,5 +43,4 @@ impl Criterion {
             operator: String::new(),
         }
     }
-
 }

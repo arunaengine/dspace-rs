@@ -20,7 +20,10 @@ pub struct ContractAgreement {
     pub asset_id: Option<String>,
     #[serde(rename = "consumerId", skip_serializing_if = "Option::is_none")]
     pub consumer_id: Option<String>,
-    #[serde(rename = "contractSigningDate", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "contractSigningDate",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub contract_signing_date: Option<i64>,
     #[serde(rename = "policy", skip_serializing_if = "Option::is_none")]
     pub policy: Option<serde_json::Value>,
@@ -29,9 +32,16 @@ pub struct ContractAgreement {
 }
 
 impl ContractAgreement {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, asset_id: Option<String>, consumer_id: Option<String>,
-               contract_signing_date: Option<i64>, policy: Option<serde_json::Value>, provider_id: Option<String>) -> ContractAgreement {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        asset_id: Option<String>,
+        consumer_id: Option<String>,
+        contract_signing_date: Option<i64>,
+        policy: Option<serde_json::Value>,
+        provider_id: Option<String>,
+    ) -> ContractAgreement {
         ContractAgreement {
             context,
             at_id,
@@ -46,7 +56,10 @@ impl ContractAgreement {
 
     pub fn default() -> ContractAgreement {
         ContractAgreement {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_id: None,
             at_type: Some("ContractAgreement".to_string()),
             asset_id: None,
@@ -56,5 +69,4 @@ impl ContractAgreement {
             provider_id: None,
         }
     }
-
 }

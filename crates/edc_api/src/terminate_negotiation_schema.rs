@@ -21,8 +21,12 @@ pub struct TerminateNegotiationSchema {
 }
 
 impl TerminateNegotiationSchema {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: String, at_type: Option<String>, reason: Option<String>) -> TerminateNegotiationSchema {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: String,
+        at_type: Option<String>,
+        reason: Option<String>,
+    ) -> TerminateNegotiationSchema {
         TerminateNegotiationSchema {
             context,
             at_id,
@@ -39,5 +43,4 @@ impl TerminateNegotiationSchema {
             reason: None,
         }
     }
-
 }

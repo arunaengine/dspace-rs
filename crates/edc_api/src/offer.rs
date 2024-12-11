@@ -24,8 +24,13 @@ pub struct Offer {
 }
 
 impl Offer {
-
-    pub fn new(context: Option<String>, at_type: Option<String>, at_id: String, assigner: String, target: String) -> Offer {
+    pub fn new(
+        context: Option<String>,
+        at_type: Option<String>,
+        at_id: String,
+        assigner: String,
+        target: String,
+    ) -> Offer {
         Offer {
             context,
             at_type,
@@ -44,5 +49,4 @@ impl Offer {
             target: String::new(),
         }
     }
-
 }

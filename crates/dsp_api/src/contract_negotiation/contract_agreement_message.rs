@@ -38,8 +38,14 @@ pub struct ContractAgreementMessage {
 }
 
 impl ContractAgreementMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               agreement: Agreement, callback_address: String) -> ContractAgreementMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        agreement: Agreement,
+        callback_address: String,
+    ) -> ContractAgreementMessage {
         ContractAgreementMessage {
             context,
             dsp_type,

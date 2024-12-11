@@ -15,17 +15,11 @@ pub struct NegotiationState {
 }
 
 impl NegotiationState {
-
     pub fn new(state: Option<String>) -> NegotiationState {
-        NegotiationState {
-            state,
-        }
+        NegotiationState { state }
     }
 
     pub fn default() -> NegotiationState {
-        NegotiationState {
-            state: None,
-        }
+        NegotiationState { state: None }
     }
-
 }

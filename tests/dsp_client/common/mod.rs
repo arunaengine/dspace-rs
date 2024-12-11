@@ -1,16 +1,22 @@
 extern crate dsp_client;
 
+use dsp_client::configuration::Configuration;
+use dsp_client::contract_negotiation::negotiation_provider_api::GetNegotiationError;
+use dsp_client::Error;
+use edc_api::{
+    AssetInput, ContractDefinitionInput, ContractOfferDescription, ContractRequest, Criterion,
+    DataAddress, DatasetRequest, Offer, PolicyDefinitionInput,
+};
+use edc_client::configuration::ApiKey;
+use edc_client::{
+    asset_api, catalog_api, contract_definition_api, contract_negotiation_api,
+    policy_definition_api,
+};
+use odrl::name_spaces::{EDC_NS, LD_NS};
 use std::future::Future;
 use std::time::Duration;
 use tokio::time::sleep;
 use uuid::Uuid;
-use dsp_client::configuration::Configuration;
-use dsp_client::contract_negotiation::negotiation_provider_api::GetNegotiationError;
-use dsp_client::Error;
-use edc_api::{AssetInput, ContractDefinitionInput, ContractOfferDescription, ContractRequest, Criterion, DataAddress, DatasetRequest, Offer, PolicyDefinitionInput};
-use edc_client::{asset_api, catalog_api, contract_definition_api, contract_negotiation_api, policy_definition_api};
-use edc_client::configuration::ApiKey;
-use odrl::name_spaces::{EDC_NS, LD_NS};
 
 pub const PROVIDER_PROTOCOL: &str = "http://provider-connector:9194/protocol";
 pub const PROVIDER_ID: &str = "provider";
@@ -48,12 +54,15 @@ pub async fn setup_management_consumer() -> edc_client::configuration::Configura
     management_consumer.with_headers()
 }
 
-
-pub async fn setup_random_contract_definition(configuration: &edc_client::configuration::Configuration) -> (String, String, String) {
-
+pub async fn setup_random_contract_definition(
+    configuration: &edc_client::configuration::Configuration,
+) -> (String, String, String) {
     // Create asset with random id
     let asset = AssetInput {
-        context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+        context: std::collections::HashMap::from([(
+            "@vocab".to_string(),
+            serde_json::Value::String(EDC_NS.to_string()),
+        )]),
         at_id: Some(Uuid::new_v4().to_string()),
         at_type: Some("Asset".to_string()),
         data_address: Box::new(DataAddress {
@@ -65,7 +74,9 @@ pub async fn setup_random_contract_definition(configuration: &edc_client::config
         properties: Default::default(),
     };
 
-    let asset_response = asset_api::create_asset(&configuration, Some(asset)).await.unwrap();
+    let asset_response = asset_api::create_asset(&configuration, Some(asset))
+        .await
+        .unwrap();
 
     let test_policy = r#"
     {
@@ -78,17 +89,26 @@ pub async fn setup_random_contract_definition(configuration: &edc_client::config
 
     // Create policy with random id
     let policy_definition = PolicyDefinitionInput {
-        context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+        context: std::collections::HashMap::from([(
+            "@vocab".to_string(),
+            serde_json::Value::String(EDC_NS.to_string()),
+        )]),
         at_id: Some(Uuid::new_v4().to_string()),
         at_type: Some("PolicyDefinition".to_string()),
         policy: serde_json::from_str(test_policy).unwrap(),
     };
 
-    let policy_response = policy_definition_api::create_policy_definition(&configuration, Some(policy_definition)).await.unwrap();
+    let policy_response =
+        policy_definition_api::create_policy_definition(&configuration, Some(policy_definition))
+            .await
+            .unwrap();
 
     // Create contract definition with random id containing previously created asset and policy
     let contract_definition = ContractDefinitionInput {
-        context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+        context: std::collections::HashMap::from([(
+            "@vocab".to_string(),
+            serde_json::Value::String(EDC_NS.to_string()),
+        )]),
         at_id: Some(Uuid::new_v4().to_string()),
         at_type: Some("ContractDefinition".to_string()),
         access_policy_id: policy_response.clone().at_id.unwrap(),
@@ -101,21 +121,31 @@ pub async fn setup_random_contract_definition(configuration: &edc_client::config
         contract_policy_id: policy_response.clone().at_id.unwrap(),
     };
 
-    let definition_response = contract_definition_api::create_contract_definition(&configuration, Some(contract_definition)).await.unwrap();
+    let definition_response = contract_definition_api::create_contract_definition(
+        &configuration,
+        Some(contract_definition),
+    )
+    .await
+    .unwrap();
 
     (
         asset_response.clone().at_id.unwrap(),
         policy_response.clone().at_id.unwrap(),
         definition_response.clone().at_id.unwrap(),
     )
-
 }
 
-pub async fn setup_random_contract_negotiation(consumer: &edc_client::configuration::Configuration, provider: &edc_client::configuration::Configuration) -> (String, String) {
+pub async fn setup_random_contract_negotiation(
+    consumer: &edc_client::configuration::Configuration,
+    provider: &edc_client::configuration::Configuration,
+) -> (String, String) {
     let (asset_id, policy_id, _) = setup_random_contract_definition(&provider).await;
 
     let dataset_request = DatasetRequest {
-        context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+        context: std::collections::HashMap::from([(
+            "@vocab".to_string(),
+            serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+        )]),
         at_type: Some("DatasetRequest".to_string()),
         at_id: Some(asset_id.clone()),
         counter_party_address: Some(PROVIDER_PROTOCOL.to_string()),
@@ -124,12 +154,20 @@ pub async fn setup_random_contract_negotiation(consumer: &edc_client::configurat
         query_spec: None,
     };
 
-    let dataset = catalog_api::get_dataset(&consumer, Some(dataset_request)).await.unwrap();
+    let dataset = catalog_api::get_dataset(&consumer, Some(dataset_request))
+        .await
+        .unwrap();
 
-    let offer_id = dataset.get("hasPolicy").unwrap().get("@id").unwrap().to_string().replace("\"", "");
+    let offer_id = dataset
+        .get("hasPolicy")
+        .unwrap()
+        .get("@id")
+        .unwrap()
+        .to_string()
+        .replace("\"", "");
 
     let offer = Offer {
-        context:  Some(LD_NS.to_string()),
+        context: Some(LD_NS.to_string()),
         at_type: Some("Offer".to_string()),
         at_id: offer_id.clone(),
         assigner: PROVIDER_ID.to_string(),
@@ -152,7 +190,10 @@ pub async fn setup_random_contract_negotiation(consumer: &edc_client::configurat
     };
 
     let contract_request = ContractRequest {
-        context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+        context: std::collections::HashMap::from([(
+            "@vocab".to_string(),
+            serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+        )]),
         at_type: Some("ContractRequest".to_string()),
         callback_addresses: None,
         connector_address: Some(PROVIDER_PROTOCOL.to_string()),
@@ -163,31 +204,52 @@ pub async fn setup_random_contract_negotiation(consumer: &edc_client::configurat
         provider_id: Some(PROVIDER_ID.to_string()),
     };
 
-    let response = contract_negotiation_api::initiate_contract_negotiation(&consumer, Some(contract_request)).await.unwrap();
+    let response =
+        contract_negotiation_api::initiate_contract_negotiation(&consumer, Some(contract_request))
+            .await
+            .unwrap();
 
     (response.clone().at_id.unwrap(), asset_id.clone())
-
 }
 
-pub async fn get_negotiation_state(conf: &Configuration, id: &str) -> Result<dsp_api::contract_negotiation::contract_negotiation::NegotiationState, Error<GetNegotiationError>> {
-    let negotiation = dsp_client::contract_negotiation::negotiation_provider_api::get_negotiation(conf, id).await?;
+pub async fn get_negotiation_state(
+    conf: &Configuration,
+    id: &str,
+) -> Result<
+    dsp_api::contract_negotiation::contract_negotiation::NegotiationState,
+    Error<GetNegotiationError>,
+> {
+    let negotiation =
+        dsp_client::contract_negotiation::negotiation_provider_api::get_negotiation(conf, id)
+            .await?;
     let state = negotiation.state;
     Ok(state)
 }
 
-pub async fn wait_for_negotiation_state(conf: &Configuration, id: &str, state: dsp_api::contract_negotiation::contract_negotiation::NegotiationState) {
-    wait_for(|| {
-        async {
-            let i_state = state.clone();
-            get_negotiation_state(conf, id).await.map_err(|err| err.to_string()).and_then(|s| {
+pub async fn wait_for_negotiation_state(
+    conf: &Configuration,
+    id: &str,
+    state: dsp_api::contract_negotiation::contract_negotiation::NegotiationState,
+) {
+    wait_for(|| async {
+        let i_state = state.clone();
+        get_negotiation_state(conf, id)
+            .await
+            .map_err(|err| err.to_string())
+            .and_then(|s| {
                 if s == state {
                     Ok(i_state)
                 } else {
-                    Err(format!("State mismatch! Expected: {:?} Got: {:?}", state.clone(), s.clone()))
+                    Err(format!(
+                        "State mismatch! Expected: {:?} Got: {:?}",
+                        state.clone(),
+                        s.clone()
+                    ))
                 }
             })
-        }
-    }).await.unwrap();
+    })
+    .await
+    .unwrap();
 }
 
 pub async fn wait_for<F, Fut, R, E>(f: F) -> Result<R, E>
@@ -205,7 +267,8 @@ where
                 }
             }
         }
-    }).await;
+    })
+    .await;
 
     timeout.unwrap()
 }

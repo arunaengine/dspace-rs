@@ -33,7 +33,10 @@ pub struct ProtocolVersion {
 }
 
 impl DspaceVersion {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, protocol_version: Vec<ProtocolVersion>) -> DspaceVersion {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        protocol_version: Vec<ProtocolVersion>,
+    ) -> DspaceVersion {
         DspaceVersion {
             context,
             protocol_version,
@@ -43,9 +46,6 @@ impl DspaceVersion {
 
 impl ProtocolVersion {
     pub fn new(version: String, path: String) -> ProtocolVersion {
-        ProtocolVersion {
-            version,
-            path,
-        }
+        ProtocolVersion { version, path }
     }
 }

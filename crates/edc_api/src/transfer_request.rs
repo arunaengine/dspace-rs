@@ -24,7 +24,9 @@ pub struct TransferRequest {
     pub connector_address: Option<String>,
     /// Provider connector id is stored in the contract agreement, connectorId is deprecated
     #[serde(rename = "connectorId", skip_serializing_if = "Option::is_none")]
-    #[deprecated(note = "Provider connector id is stored in the contract agreement, connectorId is deprecated")]
+    #[deprecated(
+        note = "Provider connector id is stored in the contract agreement, connectorId is deprecated"
+    )]
     pub connector_id: Option<String>,
     #[serde(rename = "contractId")]
     pub contract_id: String,
@@ -41,10 +43,20 @@ pub struct TransferRequest {
 }
 
 impl TransferRequest {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, asset_id: String, callback_addresses: Option<Vec<crate::CallbackAddress>>,
-               connector_address: Option<String>, connector_id: Option<String>, contract_id: String, counter_party_address: String, data_destination: Box<crate::DataAddress>,
-               private_properties: Option<::std::collections::HashMap<String, String>>, protocol: String, transfer_type: String) -> TransferRequest {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        asset_id: String,
+        callback_addresses: Option<Vec<crate::CallbackAddress>>,
+        connector_address: Option<String>,
+        connector_id: Option<String>,
+        contract_id: String,
+        counter_party_address: String,
+        data_destination: Box<crate::DataAddress>,
+        private_properties: Option<::std::collections::HashMap<String, String>>,
+        protocol: String,
+        transfer_type: String,
+    ) -> TransferRequest {
         TransferRequest {
             context,
             at_type,
@@ -63,7 +75,10 @@ impl TransferRequest {
 
     pub fn default() -> TransferRequest {
         TransferRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("TransferRequest".to_string()),
             asset_id: String::new(),
             callback_addresses: None,
@@ -77,5 +92,4 @@ impl TransferRequest {
             transfer_type: String::new(),
         }
     }
-
 }

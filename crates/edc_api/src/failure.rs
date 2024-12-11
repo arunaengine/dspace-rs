@@ -18,12 +18,10 @@ pub struct Failure {
 }
 
 impl Failure {
-
     pub fn new() -> Failure {
         Failure {
             failure_detail: None,
             messages: None,
         }
     }
-
 }

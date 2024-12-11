@@ -1,14 +1,15 @@
-use serde_json::{Result, Value};
 use crate::model::action::Action;
 use crate::model::action::Refinements;
-use crate::model::asset::{Asset};
+use crate::model::asset::Asset;
 use crate::model::conflict_term::ConflictTerm;
-use crate::model::constraint::{Constraint, LeftOperand, Operator, RightOperand, LogicalConstraint, LogicalOperator};
+use crate::model::constraint::{
+    Constraint, LeftOperand, LogicalConstraint, LogicalOperator, Operator, RightOperand,
+};
 use crate::model::party::{Function, Party};
 use crate::model::policy::{AgreementPolicy, OfferPolicy, Policy, SetPolicy};
 use crate::model::rule::{Duty, Obligation, Permission, Prohibition, Rule};
 use crate::model::type_alias::IRI;
-
+use serde_json::{Result, Value};
 
 #[derive(Debug, Deserialize)]
 pub struct ParsedData {
@@ -25,22 +26,25 @@ impl ParsedData {
     }
 }
 
-
 fn parse_policy(policy: &Value) -> Result<Policy> {
-
     /* fields of policies:
-        uid: IRI,
-        rules: Vec<Rule>,
-        profiles: Vec<IRI>,
-        inherit_from: Vec<IRI>,
-        conflict: Option<ConflictTerm>,
-        obligation: Vec<Rule>,
+       uid: IRI,
+       rules: Vec<Rule>,
+       profiles: Vec<IRI>,
+       inherit_from: Vec<IRI>,
+       conflict: Option<ConflictTerm>,
+       obligation: Vec<Rule>,
 
-        assigner: Party,        | part of OfferPolicy and AgreementPolicy
-        assignee: Party,        | part of AgreementPolicy
-     */
+       assigner: Party,        | part of OfferPolicy and AgreementPolicy
+       assignee: Party,        | part of AgreementPolicy
+    */
 
-    let policy_uid = policy.get("uid").ok_or("No uid field").unwrap().to_string().replace("\"", "");
+    let policy_uid = policy
+        .get("uid")
+        .ok_or("No uid field")
+        .unwrap()
+        .to_string()
+        .replace("\"", "");
 
     let mut rules_vec: Vec<Rule> = vec![];
 
@@ -103,8 +107,17 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
 
     /* Parse policy type */
     if let Some(type_) = policy.get("@type") {
-        if type_ == "set" || type_ == "Set"{
-            let set_policy: Policy = Policy::SetPolicy(SetPolicy::new(policy_uid, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+        if type_ == "set" || type_ == "Set" {
+            let set_policy: Policy = Policy::SetPolicy(SetPolicy::new(
+                policy_uid,
+                rules_vec,
+                profiles_vec,
+                inherit_from_vec,
+                conflict_term,
+                vec![],
+                None,
+                None,
+            ));
             policy_obj = set_policy;
         } else if type_ == "offer" || type_ == "Offer" {
             if policy.is_object() {
@@ -113,20 +126,54 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                     // get assigner from one of the permissions
                     for perm in permissions {
                         if perm.get("assigner").is_some() {
-                            let assigner_uid = perm.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                perm.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(
+                                policy_uid,
+                                assigner,
+                                rules_vec,
+                                profiles_vec,
+                                inherit_from_vec,
+                                conflict_term,
+                                vec![],
+                                None,
+                                None,
+                            ));
                             policy_obj = offer_policy;
                             break;
                         }
                     }
-                } else if let Some(prohibitions) = policy.get("prohibition").and_then(|x| x.as_array()) {
+                } else if let Some(prohibitions) =
+                    policy.get("prohibition").and_then(|x| x.as_array())
+                {
                     // get assigner from one of the prohibitions
                     for proh in prohibitions {
                         if proh.get("assigner").is_some() {
-                            let assigner_uid = proh.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                proh.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(
+                                policy_uid,
+                                assigner,
+                                rules_vec,
+                                profiles_vec,
+                                inherit_from_vec,
+                                conflict_term,
+                                vec![],
+                                None,
+                                None,
+                            ));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -135,20 +182,54 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                     // get assigner from one of the duties
                     for duty in duties {
                         if duty.get("assigner").is_some() {
-                            let assigner_uid = duty.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                duty.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(
+                                policy_uid,
+                                assigner,
+                                rules_vec,
+                                profiles_vec,
+                                inherit_from_vec,
+                                conflict_term,
+                                vec![],
+                                None,
+                                None,
+                            ));
                             policy_obj = offer_policy;
                             break;
                         }
                     }
-                } else if let Some(obligations) = policy.get("obligation").and_then(|x| x.as_array()) {
+                } else if let Some(obligations) =
+                    policy.get("obligation").and_then(|x| x.as_array())
+                {
                     // get assigner from one of the obligations
                     for obli in obligations {
                         if obli.get("assigner").is_some() {
-                            let assigner_uid = obli.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                obli.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(
+                                policy_uid,
+                                assigner,
+                                rules_vec,
+                                profiles_vec,
+                                inherit_from_vec,
+                                conflict_term,
+                                vec![],
+                                None,
+                                None,
+                            ));
                             policy_obj = offer_policy;
                             break;
                         }
@@ -156,35 +237,99 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                 }
             } else if policy.is_array() {
                 let assigner_uid = policy.get("assigner").ok_or("No assigner field").unwrap();
-                let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(policy_uid, assigner, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                let assigner = Party::new(
+                    Some(assigner_uid.to_string().replace("\"", "")),
+                    vec![],
+                    Function::Assigner,
+                    None,
+                );
+                let offer_policy: Policy = Policy::OfferPolicy(OfferPolicy::new(
+                    policy_uid,
+                    assigner,
+                    rules_vec,
+                    profiles_vec,
+                    inherit_from_vec,
+                    conflict_term,
+                    vec![],
+                    None,
+                    None,
+                ));
                 policy_obj = offer_policy;
             }
-        }
-        else if type_ == "agreement" || type_ == "Agreement"{
+        } else if type_ == "agreement" || type_ == "Agreement" {
             if policy.is_object() {
                 if let Some(permissions) = policy.get("permission").and_then(|x| x.as_array()) {
                     // get assigner and assignee from the permission
                     for perm in permissions {
                         if perm.get("assigner").is_some() && perm.get("assignee").is_some() {
-                            let assigner_uid = perm.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let assignee_uid = perm.get("assignee").ok_or("No assignee field").unwrap();
-                            let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                perm.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let assignee_uid =
+                                perm.get("assignee").ok_or("No assignee field").unwrap();
+                            let assignee = Party::new(
+                                Some(assignee_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assignee,
+                                None,
+                            );
+                            let agreement_policy: Policy =
+                                Policy::AgreementPolicy(AgreementPolicy::new(
+                                    policy_uid,
+                                    assigner,
+                                    assignee,
+                                    rules_vec,
+                                    profiles_vec,
+                                    inherit_from_vec,
+                                    conflict_term,
+                                    vec![],
+                                    None,
+                                    None,
+                                ));
                             policy_obj = agreement_policy;
                             break;
                         }
                     }
-                } else if let Some(prohibitions) = policy.get("prohibition").and_then(|x| x.as_array()) {
+                } else if let Some(prohibitions) =
+                    policy.get("prohibition").and_then(|x| x.as_array())
+                {
                     // get assigner and assignee from the prohibition
                     for proh in prohibitions {
                         if proh.get("assigner").is_some() && proh.get("assignee").is_some() {
-                            let assigner_uid = proh.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let assignee_uid = proh.get("assignee").ok_or("No assignee field").unwrap();
-                            let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                proh.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let assignee_uid =
+                                proh.get("assignee").ok_or("No assignee field").unwrap();
+                            let assignee = Party::new(
+                                Some(assignee_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assignee,
+                                None,
+                            );
+                            let agreement_policy: Policy =
+                                Policy::AgreementPolicy(AgreementPolicy::new(
+                                    policy_uid,
+                                    assigner,
+                                    assignee,
+                                    rules_vec,
+                                    profiles_vec,
+                                    inherit_from_vec,
+                                    conflict_term,
+                                    vec![],
+                                    None,
+                                    None,
+                                ));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -193,24 +338,74 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                     // get assigner and assignee from the duty
                     for duty in duties {
                         if duty.get("assigner").is_some() && duty.get("assignee").is_some() {
-                            let assigner_uid = duty.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let assignee_uid = duty.get("assignee").ok_or("No assignee field").unwrap();
-                            let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                duty.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let assignee_uid =
+                                duty.get("assignee").ok_or("No assignee field").unwrap();
+                            let assignee = Party::new(
+                                Some(assignee_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assignee,
+                                None,
+                            );
+                            let agreement_policy: Policy =
+                                Policy::AgreementPolicy(AgreementPolicy::new(
+                                    policy_uid,
+                                    assigner,
+                                    assignee,
+                                    rules_vec,
+                                    profiles_vec,
+                                    inherit_from_vec,
+                                    conflict_term,
+                                    vec![],
+                                    None,
+                                    None,
+                                ));
                             policy_obj = agreement_policy;
                             break;
                         }
                     }
-                } else if let Some(obligations) = policy.get("obligation").and_then(|x| x.as_array()) {
+                } else if let Some(obligations) =
+                    policy.get("obligation").and_then(|x| x.as_array())
+                {
                     // get assigner and assignee from the obligation
                     for obli in obligations {
                         if obli.get("assigner").is_some() && obli.get("assignee").is_some() {
-                            let assigner_uid = obli.get("assigner").ok_or("No assigner field").unwrap();
-                            let assigner = Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None);
-                            let assignee_uid = obli.get("assignee").ok_or("No assignee field").unwrap();
-                            let assignee = Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None);
-                            let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                            let assigner_uid =
+                                obli.get("assigner").ok_or("No assigner field").unwrap();
+                            let assigner = Party::new(
+                                Some(assigner_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assigner,
+                                None,
+                            );
+                            let assignee_uid =
+                                obli.get("assignee").ok_or("No assignee field").unwrap();
+                            let assignee = Party::new(
+                                Some(assignee_uid.to_string().replace("\"", "")),
+                                vec![],
+                                Function::Assignee,
+                                None,
+                            );
+                            let agreement_policy: Policy =
+                                Policy::AgreementPolicy(AgreementPolicy::new(
+                                    policy_uid,
+                                    assigner,
+                                    assignee,
+                                    rules_vec,
+                                    profiles_vec,
+                                    inherit_from_vec,
+                                    conflict_term,
+                                    vec![],
+                                    None,
+                                    None,
+                                ));
                             policy_obj = agreement_policy;
                             break;
                         }
@@ -218,10 +413,31 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
                 }
             } else if policy.is_array() {
                 let assigner_uid = policy.get("assigner").ok_or("No assigner field").unwrap();
-                let assigner = Party::new(Some(assigner_uid.to_string()), vec![], Function::Assigner, None);
+                let assigner = Party::new(
+                    Some(assigner_uid.to_string()),
+                    vec![],
+                    Function::Assigner,
+                    None,
+                );
                 let assignee_uid = policy.get("assignee").ok_or("No assignee field").unwrap();
-                let assignee = Party::new(Some(assignee_uid.to_string()), vec![], Function::Assignee, None);
-                let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(policy_uid, assigner, assignee, rules_vec, profiles_vec, inherit_from_vec, conflict_term, vec![], None, None));
+                let assignee = Party::new(
+                    Some(assignee_uid.to_string()),
+                    vec![],
+                    Function::Assignee,
+                    None,
+                );
+                let agreement_policy: Policy = Policy::AgreementPolicy(AgreementPolicy::new(
+                    policy_uid,
+                    assigner,
+                    assignee,
+                    rules_vec,
+                    profiles_vec,
+                    inherit_from_vec,
+                    conflict_term,
+                    vec![],
+                    None,
+                    None,
+                ));
                 policy_obj = agreement_policy;
             }
         } else {
@@ -233,20 +449,19 @@ fn parse_policy(policy: &Value) -> Result<Policy> {
 }
 
 fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
-
     /* Common fields for rules:
-        uid: Option<IRI>,
-        action: Action,
-        relation: Option<Asset>,           | not part of Duty
-        function: Vec<Party>,              | not part of Duty
-        failures: Vec<Rule>,               | not part of Duty
-        constraints: Vec<Constraint>,      | not part of Duty
+       uid: Option<IRI>,
+       action: Action,
+       relation: Option<Asset>,           | not part of Duty
+       function: Vec<Party>,              | not part of Duty
+       failures: Vec<Rule>,               | not part of Duty
+       constraints: Vec<Constraint>,      | not part of Duty
 
-        target: Asset,
-        assigner: Option<Party>,
-        assignee: Option<Party>,
+       target: Asset,
+       assigner: Option<Party>,
+       assignee: Option<Party>,
 
-     */
+    */
 
     let uid: Option<IRI>;
     if let Some(rule_uid) = rule.get("uid") {
@@ -260,27 +475,53 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
     match rule.get("action") {
         Some(action_value) => {
             action = parse_action(action_value)?;
-        },
+        }
         None => {
             action = Action::new("Unknown", None, None, vec![]);
             println!("No action field\n")
-        },
+        }
     }
 
-    let target = rule.get("target").ok_or("No target field").unwrap().to_string().replace("\"", "");
-    let asset = Asset::new(None, Some(target), None, vec![], None, None, None, None, None, None);
+    let target = rule
+        .get("target")
+        .ok_or("No target field")
+        .unwrap()
+        .to_string()
+        .replace("\"", "");
+    let asset = Asset::new(
+        None,
+        Some(target),
+        None,
+        vec![],
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    );
 
     let assigner: Option<Party>;
     let assignee: Option<Party>;
 
     if let Some(assigner_uid) = rule.get("assigner") {
-        assigner = Some(Party::new(Some(assigner_uid.to_string().replace("\"", "")), vec![], Function::Assigner, None));
+        assigner = Some(Party::new(
+            Some(assigner_uid.to_string().replace("\"", "")),
+            vec![],
+            Function::Assigner,
+            None,
+        ));
     } else {
         assigner = None;
     }
 
     if let Some(assignee_uid) = rule.get("assignee") {
-        assignee = Some(Party::new(Some(assignee_uid.to_string().replace("\"", "")), vec![], Function::Assignee, None));
+        assignee = Some(Party::new(
+            Some(assignee_uid.to_string().replace("\"", "")),
+            vec![],
+            Function::Assignee,
+            None,
+        ));
     } else {
         assignee = None;
     }
@@ -299,8 +540,8 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
     match rule_type {
         "permission" => {
             /* permission specific fields:
-                duties: Vec<Duty>,
-             */
+               duties: Vec<Duty>,
+            */
             let mut duties_vec: Vec<Duty> = vec![];
 
             if let Some(duties) = rule.get("duty").and_then(|x| x.as_array()) {
@@ -313,13 +554,23 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
                 }
             }
 
-            parsed_rule = Rule::Permission(Permission::new(uid, action, None, vec![], vec![], constraint_vec, asset, assigner, assignee, duties_vec));
-
-        },
+            parsed_rule = Rule::Permission(Permission::new(
+                uid,
+                action,
+                None,
+                vec![],
+                vec![],
+                constraint_vec,
+                asset,
+                assigner,
+                assignee,
+                duties_vec,
+            ));
+        }
         "prohibition" => {
             /* prohibition specific fields:
-                remedies: Vec<Duty>,
-             */
+               remedies: Vec<Duty>,
+            */
             let mut remedies_vec: Vec<Duty> = vec![];
 
             if let Some(remedies) = rule.get("remedy").and_then(|x| x.as_array()) {
@@ -332,14 +583,24 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
                 }
             }
 
-            parsed_rule = Rule::Prohibition(Prohibition::new(uid, action, None, vec![], vec![], constraint_vec, asset, assigner, assignee, remedies_vec));
-
-        },
+            parsed_rule = Rule::Prohibition(Prohibition::new(
+                uid,
+                action,
+                None,
+                vec![],
+                vec![],
+                constraint_vec,
+                asset,
+                assigner,
+                assignee,
+                remedies_vec,
+            ));
+        }
         "duty" => {
             /* duty specific fields:
-                consequences: Vec<Duty>,
-                pre_condition: Option<Vec<Duty>>,
-             */
+               consequences: Vec<Duty>,
+               pre_condition: Option<Vec<Duty>>,
+            */
             let mut consequences_vec: Vec<Duty> = vec![];
             let mut pre_conditions_vec: Vec<Duty> = vec![];
 
@@ -363,16 +624,39 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
             }
 
             if pre_conditions_vec.len() > 0 {
-                parsed_rule = Rule::Duty(Duty::new(uid, action, None, vec![], vec![], constraint_vec, Some(asset), assigner, assignee, consequences_vec, Some(pre_conditions_vec)));
+                parsed_rule = Rule::Duty(Duty::new(
+                    uid,
+                    action,
+                    None,
+                    vec![],
+                    vec![],
+                    constraint_vec,
+                    Some(asset),
+                    assigner,
+                    assignee,
+                    consequences_vec,
+                    Some(pre_conditions_vec),
+                ));
             } else {
-                parsed_rule = Rule::Duty(Duty::new(uid, action, None, vec![], vec![], constraint_vec, Some(asset), assigner, assignee, consequences_vec, None));
+                parsed_rule = Rule::Duty(Duty::new(
+                    uid,
+                    action,
+                    None,
+                    vec![],
+                    vec![],
+                    constraint_vec,
+                    Some(asset),
+                    assigner,
+                    assignee,
+                    consequences_vec,
+                    None,
+                ));
             }
-
-        },
+        }
         "obligation" => {
             /* obligation specific fields:
-                consequence: Vec<Duty>,
-             */
+               consequence: Vec<Duty>,
+            */
             let mut consequences_vec: Vec<Duty> = vec![];
 
             if let Some(consequences) = rule.get("consequence").and_then(|x| x.as_array()) {
@@ -385,39 +669,59 @@ fn parse_rule(rule_type: &str, rule: &Value) -> Result<Rule> {
                 }
             }
 
-            parsed_rule = Rule::Obligation(Obligation::new(uid, asset, assigner.unwrap(), assignee.unwrap(), action, consequences_vec));
-
+            parsed_rule = Rule::Obligation(Obligation::new(
+                uid,
+                asset,
+                assigner.unwrap(),
+                assignee.unwrap(),
+                action,
+                consequences_vec,
+            ));
         }
         _ => {
-            parsed_rule = Rule::Permission(Permission::new(None, action, None, vec![], vec![], vec![], asset, None, None, vec![]));
+            parsed_rule = Rule::Permission(Permission::new(
+                None,
+                action,
+                None,
+                vec![],
+                vec![],
+                vec![],
+                asset,
+                None,
+                None,
+                vec![],
+            ));
             println!("Unknown rule type: {}\n", rule_type);
         }
     }
 
     Ok(parsed_rule)
-
 }
 
 fn parse_action(action: &Value) -> Result<Action> {
-
     let mut action_name: String = String::new();
     let mut refinements: Option<Refinements> = None;
 
     if action.is_string() {
         action_name = action.to_string().replace("\"", "");
     } else if action.is_array() {
-
         for action_item in action.as_array().unwrap() {
             let rdf_value = action_item
                 .get("rdf:value")
                 .and_then(|value| value.get("@id"))
                 .and_then(|id| id.as_str());
-            action_name = rdf_value.unwrap().to_string().replace("\"", "").replace("odrl:", "");
+            action_name = rdf_value
+                .unwrap()
+                .to_string()
+                .replace("\"", "")
+                .replace("odrl:", "");
 
             if let Some(refinement_value) = action_item.get("refinement") {
                 if refinement_value.is_object() {
                     let parsed_refinement = parse_logical_constraint(refinement_value)?;
-                    refinements = Some(Refinements::LogicalConstraints(vec![parsed_refinement.clone()]));
+                    refinements = Some(Refinements::LogicalConstraints(vec![
+                        parsed_refinement.clone()
+                    ]));
                 } else if refinement_value.is_array() {
                     for refinement in refinement_value.as_array().unwrap() {
                         let parsed_refinement = parse_constraint(refinement)?;
@@ -426,26 +730,23 @@ fn parse_action(action: &Value) -> Result<Action> {
                 }
             }
         }
-
     }
 
     let action_obj = Action::new(action_name.as_str(), refinements, None, vec![]);
 
     Ok(action_obj)
-
 }
 
 fn parse_constraint(constraint: &Value) -> Result<Constraint> {
-
     /* fields for constraints:
-        uid: Option<IRI>,
-        left_operand: LeftOperand,
-        operator: Operator,
-        right_operand: RightOperand,
-        data_type: Option<IRI>,
-        unit: Option<IRI>,
-        status: Option<IRI>,
-     */
+       uid: Option<IRI>,
+       left_operand: LeftOperand,
+       operator: Operator,
+       right_operand: RightOperand,
+       data_type: Option<IRI>,
+       unit: Option<IRI>,
+       status: Option<IRI>,
+    */
 
     let uid: Option<IRI>;
     if let Some(rule_uid) = constraint.get("uid") {
@@ -460,7 +761,8 @@ fn parse_constraint(constraint: &Value) -> Result<Constraint> {
         // Check if it's an IRI / Reference
         if left_operand_value.starts_with("http://") || left_operand_value.starts_with("https://") {
             left_operand = LeftOperand::IRI(left_operand_value.to_string());
-        } else { // Literal
+        } else {
+            // Literal
             left_operand = LeftOperand::Literal(left_operand_value.to_string());
         }
     } else {
@@ -487,9 +789,11 @@ fn parse_constraint(constraint: &Value) -> Result<Constraint> {
 
     if let Some(right_operand_value) = constraint["rightOperand"].as_str() {
         // Check if it's an IRI / Reference
-        if right_operand_value.starts_with("http://") || right_operand_value.starts_with("https://") {
+        if right_operand_value.starts_with("http://") || right_operand_value.starts_with("https://")
+        {
             right_operand = RightOperand::IRI(right_operand_value.to_string());
-        } else { // Literal
+        } else {
+            // Literal
             right_operand = RightOperand::Literal(right_operand_value.to_string());
         }
     } else if let Some(value_obj) = constraint["rightOperand"].as_object() {
@@ -514,13 +818,20 @@ fn parse_constraint(constraint: &Value) -> Result<Constraint> {
         unit = None;
     }
 
-    let constraint_obj = Constraint::new(uid, left_operand, operator, right_operand, None, unit, "".to_string());
+    let constraint_obj = Constraint::new(
+        uid,
+        left_operand,
+        operator,
+        right_operand,
+        None,
+        unit,
+        "".to_string(),
+    );
 
     Ok(constraint_obj)
 }
 
 fn parse_logical_constraint(logical_constraint: &Value) -> Result<LogicalConstraint> {
-
     let mut operator: LogicalOperator = LogicalOperator::And;
     let mut constraint_vec: Vec<IRI> = vec![];
 
@@ -538,7 +849,8 @@ fn parse_logical_constraint(logical_constraint: &Value) -> Result<LogicalConstra
             };
             let list = value.get("@list").and_then(|l| l.as_array()).unwrap();
             for element in list {
-                for (_tag, uid) in element.as_object().unwrap() {       // _tag always equals "@id" in jsonld
+                for (_tag, uid) in element.as_object().unwrap() {
+                    // _tag always equals "@id" in jsonld
                     constraint_vec.push(uid.to_string().replace("\"", ""));
                 }
             }
@@ -550,12 +862,9 @@ fn parse_logical_constraint(logical_constraint: &Value) -> Result<LogicalConstra
     let logical_constraint_obj = LogicalConstraint::new(None, Some(operand));
 
     Ok(logical_constraint_obj)
-
 }
 
-
 pub fn parse(json_data: &str) -> Result<ParsedData> {
-
     // Deserialize JSON data into serde_json::Value
     let v: Value = serde_json::from_str(json_data)?;
 
@@ -576,7 +885,10 @@ pub fn parse(json_data: &str) -> Result<ParsedData> {
                     let parsed_constraint = parse_constraint(entry)?;
                     parsed_constraints.push(parsed_constraint);
                     //println!("Parsed Constraint: {:#?}\n", parsed_constraint);
-                } else if object_type.to_lowercase() == "set" || object_type.to_lowercase() == "offer" || object_type.to_lowercase() == "agreement" {
+                } else if object_type.to_lowercase() == "set"
+                    || object_type.to_lowercase() == "offer"
+                    || object_type.to_lowercase() == "agreement"
+                {
                     let parsed_policy = parse_policy(entry)?;
                     parsed_policies.push(parsed_policy);
                     //println!("Parsed Policy: {:#?}\n", parsed_policy);
@@ -593,7 +905,10 @@ pub fn parse(json_data: &str) -> Result<ParsedData> {
             if object_type.to_lowercase() == "constraint" {
                 let parsed_constraint = parse_constraint(&v)?;
                 parsed_constraints.push(parsed_constraint);
-            } else if object_type.to_lowercase() == "set" || object_type.to_lowercase() == "offer" || object_type.to_lowercase() == "agreement" {
+            } else if object_type.to_lowercase() == "set"
+                || object_type.to_lowercase() == "offer"
+                || object_type.to_lowercase() == "agreement"
+            {
                 let parsed_policy = parse_policy(&v)?;
                 parsed_policies.push(parsed_policy);
             }
@@ -603,5 +918,4 @@ pub fn parse(json_data: &str) -> Result<ParsedData> {
     let parsed_data = ParsedData::new(parsed_policies, parsed_constraints);
 
     Ok(parsed_data)
-
 }

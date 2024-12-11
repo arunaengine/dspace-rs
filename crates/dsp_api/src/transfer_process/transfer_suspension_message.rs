@@ -25,8 +25,14 @@ pub struct TransferSuspendMessage {
 }
 
 impl TransferSuspendMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               code: Option<String>, reason: Vec<String>) -> TransferSuspendMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        code: Option<String>,
+        reason: Vec<String>,
+    ) -> TransferSuspendMessage {
         TransferSuspendMessage {
             context,
             dsp_type,

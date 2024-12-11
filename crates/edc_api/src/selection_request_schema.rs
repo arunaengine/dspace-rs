@@ -25,9 +25,14 @@ pub struct SelectionRequestSchema {
 }
 
 impl SelectionRequestSchema {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, destination: Option<Box<crate::DataAddress>>,
-               source: Option<Box<crate::DataAddress>>, strategy: Option<String>, transfer_type: Option<String>) -> SelectionRequestSchema {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        destination: Option<Box<crate::DataAddress>>,
+        source: Option<Box<crate::DataAddress>>,
+        strategy: Option<String>,
+        transfer_type: Option<String>,
+    ) -> SelectionRequestSchema {
         SelectionRequestSchema {
             context,
             at_type,
@@ -40,7 +45,10 @@ impl SelectionRequestSchema {
 
     pub fn default() -> SelectionRequestSchema {
         SelectionRequestSchema {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("SelectionRequest".to_string()),
             destination: None,
             source: None,
@@ -48,5 +56,4 @@ impl SelectionRequestSchema {
             transfer_type: None,
         }
     }
-
 }

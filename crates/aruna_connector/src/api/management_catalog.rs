@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use axum::response::IntoResponse;
-use tokio::sync::Mutex;
 use dsp_api::catalog::Catalog;
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 type SharedState = Arc<Mutex<Catalog>>;
 

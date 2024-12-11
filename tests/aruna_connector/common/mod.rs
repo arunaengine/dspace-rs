@@ -1,7 +1,7 @@
 extern crate dsp_client;
 
-use edc_client::{configuration::Configuration};
 use edc_client::configuration::ApiKey;
+use edc_client::configuration::Configuration;
 
 pub const PROVIDER_PROTOCOL: &str = "http://localhost:3000";
 pub const PROVIDER_ID: &str = "aruna-connector";
@@ -15,8 +15,9 @@ pub fn setup_provider_configuration() -> Configuration {
         None,
         None,
         None,
-        None
-    ).with_headers()
+        None,
+    )
+    .with_headers()
 }
 
 pub async fn setup_consumer_configuration() -> Configuration {
@@ -53,6 +54,7 @@ pub async fn setup_dsp_provider_configuration() -> dsp_client::configuration::Co
         None,
         None,
         None,
-        None
-    ).with_headers()
+        None,
+    )
+    .with_headers()
 }

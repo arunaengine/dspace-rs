@@ -3,10 +3,12 @@ mod json_parser_test {
     extern crate odrl;
 
     use odrl::functions::json_parser;
-    use odrl::model::{policy, asset, action, rule, party};
     use odrl::model::action::Refinements;
-    use odrl::model::constraint::{LogicalConstraint, Constraint, LeftOperand, LogicalOperator, Operator, RightOperand};
-    use odrl::model::party::Function::{Assigner, Assignee};
+    use odrl::model::constraint::{
+        Constraint, LeftOperand, LogicalConstraint, LogicalOperator, Operator, RightOperand,
+    };
+    use odrl::model::party::Function::{Assignee, Assigner};
+    use odrl::model::{action, asset, party, policy, rule};
 
     #[test]
     fn test_parse_json_set_policy() {
@@ -48,12 +50,10 @@ mod json_parser_test {
         });
 
         assert_eq!(parsed_data.parsed_policies[0], comp_policy);
-
     }
 
     #[test]
     fn test_parse_json_offer_policy() {
-
         let json_offer_policy = r#"
         {
             "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -102,12 +102,10 @@ mod json_parser_test {
         });
 
         assert_eq!(parsed_data.parsed_policies[0], comp_policy);
-
     }
 
     #[test]
     fn test_parse_json_agreement_policy() {
-
         let json_agreement_policy = r#"
         {
             "@context": "http://www.w3.org/ns/odrl.jsonld",
@@ -165,12 +163,10 @@ mod json_parser_test {
         });
 
         assert_eq!(parsed_data.parsed_policies[0], comp_policy);
-
     }
 
     #[test]
     fn test_json_policy_and_constraint() {
-
         let json_policy_and_constraint = r#"
         [{
             "@context": {
@@ -302,7 +298,7 @@ mod json_parser_test {
                 name: "print".to_string(),
                 refinements: Some(Refinements::Constraints(vec![Constraint {
                     left_operand: LeftOperand::Literal("resolution".to_string()),
-                    operator: Operator::LessThanOrEqual ,
+                    operator: Operator::LessThanOrEqual,
                     right_operand: RightOperand::Literal("1200".to_string()),
                     unit: Option::from("https://dbpedia.org/resource/Dots_per_inch".to_string()),
                     ..Default::default()
@@ -325,15 +321,15 @@ mod json_parser_test {
             action: action::Action {
                 name: "reproduce".to_string(),
                 refinements: Some(Refinements::LogicalConstraints(vec![LogicalConstraint {
-                        operand: Some(
-                            (LogicalOperator::Xone, vec![
-                                "https://example.com/p:88/C1".to_string(),
-                                "https://example.com/p:88/C2".to_string()
-                            ])
-                        ),
-                        ..Default::default()
-                    }]
-                )),
+                    operand: Some((
+                        LogicalOperator::Xone,
+                        vec![
+                            "https://example.com/p:88/C1".to_string(),
+                            "https://example.com/p:88/C2".to_string(),
+                        ],
+                    )),
+                    ..Default::default()
+                }])),
                 ..Default::default()
             },
             assigner: Some(party::Party {
@@ -372,7 +368,7 @@ mod json_parser_test {
                 rule::Rule::Permission(first_policy_first_permission),
                 rule::Rule::Permission(first_policy_second_permission),
                 rule::Rule::Permission(first_policy_third_permission),
-                first_policy_first_prohibition
+                first_policy_first_prohibition,
             ],
             ..Default::default()
         });
@@ -405,8 +401,6 @@ mod json_parser_test {
         policies.push(sec_policy);
 
         assert_eq!(parsed_data.parsed_policies, policies);
-
-
 
         // First Constraint
         let mut comp_constraints: Vec<Constraint> = Vec::new();
@@ -441,6 +435,5 @@ mod json_parser_test {
         comp_constraints.push(comp_second_constraint);
 
         assert_eq!(parsed_data.parsed_constraints, comp_constraints);
-
     }
 }

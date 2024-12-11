@@ -19,8 +19,11 @@ pub struct DataAddress {
 }
 
 impl DataAddress {
-
-    pub fn new(at_type: Option<String>, r#type: Option<String>, base_url: Option<String>) -> DataAddress {
+    pub fn new(
+        at_type: Option<String>,
+        r#type: Option<String>,
+        base_url: Option<String>,
+    ) -> DataAddress {
         DataAddress {
             at_type,
             r#type,
@@ -35,5 +38,4 @@ impl DataAddress {
             base_url: None,
         }
     }
-
 }

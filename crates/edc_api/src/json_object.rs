@@ -18,12 +18,8 @@ pub struct JsonObject {
 }
 
 impl JsonObject {
-
     pub fn new(empty: Option<bool>, value_type: Option<crate::ValueType>) -> JsonObject {
-        JsonObject {
-            empty,
-            value_type,
-        }
+        JsonObject { empty, value_type }
     }
 
     pub fn default() -> JsonObject {
@@ -32,5 +28,4 @@ impl JsonObject {
             value_type: None,
         }
     }
-
 }

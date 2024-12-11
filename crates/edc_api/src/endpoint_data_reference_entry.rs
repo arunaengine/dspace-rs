@@ -19,8 +19,11 @@ pub struct EndpointDataReferenceEntry {
 }
 
 impl EndpointDataReferenceEntry {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, at_id: Option<String>) -> EndpointDataReferenceEntry {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        at_id: Option<String>,
+    ) -> EndpointDataReferenceEntry {
         EndpointDataReferenceEntry {
             context,
             at_type,
@@ -30,10 +33,12 @@ impl EndpointDataReferenceEntry {
 
     pub fn default() -> EndpointDataReferenceEntry {
         EndpointDataReferenceEntry {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("EndpointDataReferenceEntry".to_string()),
             at_id: None,
         }
     }
-
 }

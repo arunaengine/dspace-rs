@@ -7,10 +7,8 @@
  *
  */
 
-
 use reqwest;
 use reqwest::header::{HeaderMap, HeaderValue};
-
 
 #[derive(Debug, Clone)]
 pub struct Configuration {
@@ -32,10 +30,16 @@ pub struct ApiKey {
     pub key: String,
 }
 
-
 impl Configuration {
-    pub fn new(base_path: String, user_agent: Option<String>, client: reqwest::Client, basic_auth: Option<BasicAuth>, oauth_access_token: Option<String>,
-               bearer_access_token: Option<String>, api_key: Option<ApiKey>) -> Configuration {
+    pub fn new(
+        base_path: String,
+        user_agent: Option<String>,
+        client: reqwest::Client,
+        basic_auth: Option<BasicAuth>,
+        oauth_access_token: Option<String>,
+        bearer_access_token: Option<String>,
+        api_key: Option<ApiKey>,
+    ) -> Configuration {
         Configuration {
             base_path,
             user_agent,
@@ -72,8 +76,7 @@ impl Default for Configuration {
             api_key: Some(ApiKey {
                 prefix: None,
                 key: "ApiKeyDefaultValue".to_owned(),
-            })
-
+            }),
         }
     }
 }

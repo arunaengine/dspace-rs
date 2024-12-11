@@ -40,9 +40,13 @@ pub struct ContractNegotiationEventMessage {
 }
 
 impl ContractNegotiationEventMessage {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               event_type: EventType) -> ContractNegotiationEventMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        event_type: EventType,
+    ) -> ContractNegotiationEventMessage {
         ContractNegotiationEventMessage {
             context,
             dsp_type,
@@ -54,14 +58,18 @@ impl ContractNegotiationEventMessage {
 
     pub fn default() -> ContractNegotiationEventMessage {
         ContractNegotiationEventMessage {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/dspace/2024/1/context.json".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(
+                    "https://w3id.org/dspace/2024/1/context.json".to_string(),
+                ),
+            )]),
             dsp_type: "dspace:ContractNegotiationEventMessage".to_string(),
             provider_pid: String::new(),
             consumer_pid: String::new(),
             event_type: EventType::ACCEPTED,
         }
     }
-
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]

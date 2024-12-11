@@ -14,13 +14,12 @@ pub struct HealthCheckResult {
     #[serde(rename = "component", skip_serializing_if = "Option::is_none")]
     pub component: Option<String>,
     #[serde(rename = "failure", skip_serializing_if = "Option::is_none")]
-    pub failure:  Option<crate::Failure>,
+    pub failure: Option<crate::Failure>,
     #[serde(rename = "isHealthy", skip_serializing_if = "Option::is_none")]
     pub is_healthy: Option<bool>,
 }
 
 impl HealthCheckResult {
-
     pub fn new() -> HealthCheckResult {
         HealthCheckResult {
             component: None,
@@ -28,5 +27,4 @@ impl HealthCheckResult {
             is_healthy: None,
         }
     }
-
 }

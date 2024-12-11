@@ -19,8 +19,11 @@ pub struct SuspendTransfer {
 }
 
 impl SuspendTransfer {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, reason: Option<String>) -> SuspendTransfer {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        reason: Option<String>,
+    ) -> SuspendTransfer {
         SuspendTransfer {
             context,
             at_type,
@@ -30,10 +33,12 @@ impl SuspendTransfer {
 
     pub fn default() -> SuspendTransfer {
         SuspendTransfer {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("SuspendTransfer".to_string()),
             reason: None,
         }
     }
-
 }

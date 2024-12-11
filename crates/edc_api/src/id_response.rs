@@ -17,12 +17,8 @@ pub struct IdResponse {
 }
 
 impl IdResponse {
-
     pub fn new(at_id: Option<String>, created_at: Option<i64>) -> IdResponse {
-        IdResponse {
-            at_id,
-            created_at,
-        }
+        IdResponse { at_id, created_at }
     }
 
     pub fn default() -> IdResponse {
@@ -31,5 +27,4 @@ impl IdResponse {
             created_at: None,
         }
     }
-
 }

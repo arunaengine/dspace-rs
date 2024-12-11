@@ -21,9 +21,13 @@ pub struct ContractNegotiation {
 }
 
 impl ContractNegotiation {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String,
-               state: NegotiationState) -> ContractNegotiation {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        state: NegotiationState,
+    ) -> ContractNegotiation {
         ContractNegotiation {
             context,
             dsp_type,
@@ -35,30 +39,53 @@ impl ContractNegotiation {
 
     pub fn default() -> ContractNegotiation {
         ContractNegotiation {
-            context: std::collections::HashMap::from([("dspace".to_string(), serde_json::Value::String("https://w3id.org/dspace/v0.8/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "dspace".to_string(),
+                serde_json::Value::String("https://w3id.org/dspace/v0.8/".to_string()),
+            )]),
             dsp_type: "dspace:ContractNegotiation".to_string(),
             provider_pid: String::new(),
             consumer_pid: String::new(),
             state: NegotiationState::REQUESTED,
         }
     }
-
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum NegotiationState {
-    #[serde(rename = "dspace:REQUESTED", alias = "https://w3id.org/dspace/v0.8/REQUESTED")]
+    #[serde(
+        rename = "dspace:REQUESTED",
+        alias = "https://w3id.org/dspace/v0.8/REQUESTED"
+    )]
     REQUESTED,
-    #[serde(rename = "dspace:OFFERED", alias = "https://w3id.org/dspace/v0.8/OFFERED")]
+    #[serde(
+        rename = "dspace:OFFERED",
+        alias = "https://w3id.org/dspace/v0.8/OFFERED"
+    )]
     OFFERED,
-    #[serde(rename = "dspace:ACCEPTED", alias = "https://w3id.org/dspace/v0.8/ACCEPTED")]
+    #[serde(
+        rename = "dspace:ACCEPTED",
+        alias = "https://w3id.org/dspace/v0.8/ACCEPTED"
+    )]
     ACCEPTED,
-    #[serde(rename = "dspace:AGREED", alias = "https://w3id.org/dspace/v0.8/AGREED")]
+    #[serde(
+        rename = "dspace:AGREED",
+        alias = "https://w3id.org/dspace/v0.8/AGREED"
+    )]
     AGREED,
-    #[serde(rename = "dspace:VERIFIED", alias = "https://w3id.org/dspace/v0.8/VERIFIED")]
+    #[serde(
+        rename = "dspace:VERIFIED",
+        alias = "https://w3id.org/dspace/v0.8/VERIFIED"
+    )]
     VERIFIED,
-    #[serde(rename = "dspace:FINALIZED", alias = "https://w3id.org/dspace/v0.8/FINALIZED")]
+    #[serde(
+        rename = "dspace:FINALIZED",
+        alias = "https://w3id.org/dspace/v0.8/FINALIZED"
+    )]
     FINALIZED,
-    #[serde(rename = "dspace:TERMINATED", alias = "https://w3id.org/dspace/v0.8/TERMINATED")]
+    #[serde(
+        rename = "dspace:TERMINATED",
+        alias = "https://w3id.org/dspace/v0.8/TERMINATED"
+    )]
     TERMINATED,
 }

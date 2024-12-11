@@ -16,13 +16,20 @@ pub struct DeprovisionedResource {
     pub error_message: Option<String>,
     #[serde(rename = "inProcess", skip_serializing_if = "Option::is_none")]
     pub in_process: Option<bool>,
-    #[serde(rename = "provisionedResourceId", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "provisionedResourceId",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub provisioned_resource_id: Option<String>,
 }
 
 impl DeprovisionedResource {
-
-    pub fn new(error: Option<bool>, error_message: Option<String>, in_process: Option<bool>, provisioned_resource_id: Option<String>) -> DeprovisionedResource {
+    pub fn new(
+        error: Option<bool>,
+        error_message: Option<String>,
+        in_process: Option<bool>,
+        provisioned_resource_id: Option<String>,
+    ) -> DeprovisionedResource {
         DeprovisionedResource {
             error,
             error_message,
@@ -39,7 +46,4 @@ impl DeprovisionedResource {
             provisioned_resource_id: None,
         }
     }
-
 }
-
-

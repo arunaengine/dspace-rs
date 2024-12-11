@@ -13,7 +13,7 @@ pub struct CatalogError {
     #[serde(rename = "@type")]
     pub dsp_type: String,
     #[serde(rename = "dspace:code", skip_serializing_if = "Option::is_none")]
-    pub code: Option<String>,               // An optional implementation-specific error code.
+    pub code: Option<String>, // An optional implementation-specific error code.
     #[serde(rename = "dspace:reason", skip_serializing_if = "Vec::is_empty")]
-    pub reason: Vec<String>,                // An optional array of implementation-specific error objects.
+    pub reason: Vec<String>, // An optional array of implementation-specific error objects.
 }

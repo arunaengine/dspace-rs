@@ -25,8 +25,14 @@ pub struct CallbackAddress {
 }
 
 impl CallbackAddress {
-
-    pub fn new(at_type: Option<String>, auth_code_id: Option<String>, auth_key: Option<String>, events: Option<Vec<String>>, transactional: Option<bool>, uri: Option<String>) -> CallbackAddress {
+    pub fn new(
+        at_type: Option<String>,
+        auth_code_id: Option<String>,
+        auth_key: Option<String>,
+        events: Option<Vec<String>>,
+        transactional: Option<bool>,
+        uri: Option<String>,
+    ) -> CallbackAddress {
         CallbackAddress {
             at_type,
             auth_code_id,
@@ -47,5 +53,4 @@ impl CallbackAddress {
             uri: None,
         }
     }
-
 }

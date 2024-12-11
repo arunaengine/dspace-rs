@@ -6,12 +6,10 @@
  *
  */
 
-
 use reqwest;
 
+use super::{configuration, Error};
 use crate::ResponseContent;
-use super::{Error, configuration};
-
 
 /// struct for typed errors of method [`check_health`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -41,19 +39,22 @@ pub enum GetStartupError {
     UnknownValue(serde_json::Value),
 }
 
-
 /// Performs a liveness probe to determine whether the runtime is working properly.
 #[deprecated(note = "This endpoint is deprecated since management api version 0.5.2-SNAPSHOT")]
-pub async fn check_health(configuration: &configuration::Configuration) -> Result<edc_api::HealthStatus, Error<CheckHealthError>> {
+pub async fn check_health(
+    configuration: &configuration::Configuration,
+) -> Result<edc_api::HealthStatus, Error<CheckHealthError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!("{}/check/health", local_var_configuration.base_path);
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -65,24 +66,33 @@ pub async fn check_health(configuration: &configuration::Configuration) -> Resul
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
-        let local_var_entity: Option<CheckHealthError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<CheckHealthError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
 
 /// Performs a liveness probe to determine whether the runtime is working properly.
 #[deprecated(note = "This endpoint is deprecated since management api version 0.5.2-SNAPSHOT")]
-pub async fn get_liveness(configuration: &configuration::Configuration) -> Result<edc_api::HealthStatus, Error<GetLivenessError>> {
+pub async fn get_liveness(
+    configuration: &configuration::Configuration,
+) -> Result<edc_api::HealthStatus, Error<GetLivenessError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!("{}/check/liveness", local_var_configuration.base_path);
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -94,24 +104,33 @@ pub async fn get_liveness(configuration: &configuration::Configuration) -> Resul
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetLivenessError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<GetLivenessError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
 
 /// Performs a readiness probe to determine whether the runtime is able to accept requests.
 #[deprecated(note = "This endpoint is deprecated since management api version 0.5.2-SNAPSHOT")]
-pub async fn get_readiness(configuration: &configuration::Configuration) -> Result<edc_api::HealthStatus, Error<GetReadinessError>> {
+pub async fn get_readiness(
+    configuration: &configuration::Configuration,
+) -> Result<edc_api::HealthStatus, Error<GetReadinessError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!("{}/check/readiness", local_var_configuration.base_path);
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -123,24 +142,33 @@ pub async fn get_readiness(configuration: &configuration::Configuration) -> Resu
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetReadinessError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<GetReadinessError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
 
 /// Performs a startup probe to determine whether the runtime has completed startup.
 #[deprecated(note = "This endpoint is deprecated since management api version 0.5.2-SNAPSHOT")]
-pub async fn get_startup(configuration: &configuration::Configuration) -> Result<edc_api::HealthStatus, Error<GetStartupError>> {
+pub async fn get_startup(
+    configuration: &configuration::Configuration,
+) -> Result<edc_api::HealthStatus, Error<GetStartupError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!("{}/check/startup", local_var_configuration.base_path);
-    let mut local_var_req_builder = local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+    let mut local_var_req_builder =
+        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder = local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -152,9 +180,13 @@ pub async fn get_startup(configuration: &configuration::Configuration) -> Result
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetStartupError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_entity: Option<GetStartupError> =
+            serde_json::from_str(&local_var_content).ok();
+        let local_var_error = ResponseContent {
+            status: local_var_status,
+            content: local_var_content,
+            entity: local_var_entity,
+        };
         Err(Error::ResponseError(local_var_error))
     }
 }
-

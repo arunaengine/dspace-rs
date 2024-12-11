@@ -21,12 +21,15 @@ pub struct CatalogRequestMessage {
     #[serde(rename = "@type")]
     pub dsp_type: String,
     #[serde(rename = "dspace:filter", skip_serializing_if = "Vec::is_empty")]
-    pub filter: Vec<String>,    // TODO: Items are not defined in the spec, is String correct?
+    pub filter: Vec<String>, // TODO: Items are not defined in the spec, is String correct?
 }
 
 impl CatalogRequestMessage {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, filter: Vec<String>) -> CatalogRequestMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        filter: Vec<String>,
+    ) -> CatalogRequestMessage {
         CatalogRequestMessage {
             context,
             dsp_type,
@@ -36,10 +39,14 @@ impl CatalogRequestMessage {
 
     pub fn default() -> CatalogRequestMessage {
         CatalogRequestMessage {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/dspace/2024/1/context.json".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(
+                    "https://w3id.org/dspace/2024/1/context.json".to_string(),
+                ),
+            )]),
             dsp_type: "dspace:CatalogRequestMessage".to_string(),
             filter: Vec::new(),
         }
     }
-
 }

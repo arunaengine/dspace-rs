@@ -18,7 +18,7 @@ pub struct ContractRequest {
     pub callback_addresses: Option<Vec<crate::CallbackAddress>>,
     /// please use counterPartyAddress instead, connectorAddress is deprecated
     #[serde(rename = "connectorAddress", skip_serializing_if = "Option::is_none")]
-    #[deprecated(note="Please use counterPartyAddress instead, connectorAddress is deprecated")]
+    #[deprecated(note = "Please use counterPartyAddress instead, connectorAddress is deprecated")]
     pub connector_address: Option<String>,
     #[serde(rename = "counterPartyAddress")]
     pub counter_party_address: String,
@@ -30,15 +30,22 @@ pub struct ContractRequest {
     pub protocol: String,
     /// please use policy.assigner instead, providerId is deprecated
     #[serde(rename = "providerId", skip_serializing_if = "Option::is_none")]
-    #[deprecated(note="Please use policy.assigner instead, providerId is deprecated")]
+    #[deprecated(note = "Please use policy.assigner instead, providerId is deprecated")]
     pub provider_id: Option<String>,
 }
 
 impl ContractRequest {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_type: Option<String>, callback_addresses: Option<Vec<crate::CallbackAddress>>,
-               connector_address: Option<String>, counter_party_address: String, offer: Option<crate::ContractOfferDescription>, policy: Option<crate::Offer>,
-               protocol: String, provider_id: Option<String>) -> ContractRequest {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_type: Option<String>,
+        callback_addresses: Option<Vec<crate::CallbackAddress>>,
+        connector_address: Option<String>,
+        counter_party_address: String,
+        offer: Option<crate::ContractOfferDescription>,
+        policy: Option<crate::Offer>,
+        protocol: String,
+        provider_id: Option<String>,
+    ) -> ContractRequest {
         ContractRequest {
             context,
             at_type,
@@ -54,7 +61,10 @@ impl ContractRequest {
 
     pub fn default() -> ContractRequest {
         ContractRequest {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("ContractRequest".to_string()),
             callback_addresses: None,
             connector_address: None,
@@ -65,5 +75,4 @@ impl ContractRequest {
             provider_id: None,
         }
     }
-
 }

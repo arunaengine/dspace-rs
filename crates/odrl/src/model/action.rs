@@ -1,6 +1,6 @@
-use utoipa::ToSchema;
 use crate::model::constraint::Constraint;
 use crate::model::constraint::LogicalConstraint;
+use utoipa::ToSchema;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum Refinements {
@@ -16,7 +16,6 @@ impl Default for Refinements {
 
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Action {
-
     #[serde(rename = "action")]
     pub name: String,
     #[serde(rename = "refinement", skip_serializing_if = "Option::is_none")]
@@ -25,12 +24,15 @@ pub struct Action {
     pub included_in: Option<Box<Action>>, // Use Box to allow recursive type definition
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub implies: Vec<Box<Action>>,
-
 }
 
 impl Action {
-
-    pub fn new(name: &str, refinements: Option<Refinements>, included_in: Option<Action>, implies: Vec<Action>) -> Action {
+    pub fn new(
+        name: &str,
+        refinements: Option<Refinements>,
+        included_in: Option<Action>,
+        implies: Vec<Action>,
+    ) -> Action {
         Action {
             name: name.to_string(),
             refinements,
@@ -59,5 +61,4 @@ impl Action {
 
         (use_action, transfer_action)
     }
-
 }

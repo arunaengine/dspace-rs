@@ -7,7 +7,7 @@ mod policy_definition_api_create_test {
 
     use crate::common::setup_provider_configuration;
     use edc_api::PolicyDefinitionInput;
-    use edc_client::{Error, policy_definition_api};
+    use edc_client::{policy_definition_api, Error};
     use odrl::name_spaces::EDC_NS;
 
     use uuid::Uuid;
@@ -28,13 +28,21 @@ mod policy_definition_api_create_test {
         "#;
 
         let policy_definition = PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(policy_definition_id.clone()),
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::from_str(test_policy).unwrap(),
         };
 
-        let response = policy_definition_api::create_policy_definition(&provider_configuration, Some(policy_definition)).await.unwrap();
+        let response = policy_definition_api::create_policy_definition(
+            &provider_configuration,
+            Some(policy_definition),
+        )
+        .await
+        .unwrap();
 
         assert_eq!(response.at_id.unwrap(), policy_definition_id);
     }
@@ -55,17 +63,29 @@ mod policy_definition_api_create_test {
         "#;
 
         let policy_definition = PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(policy_definition_id.clone()),
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::from_str(test_policy).unwrap(),
         };
 
-        let response = policy_definition_api::create_policy_definition(&provider_configuration, Some(policy_definition.clone())).await.unwrap();
+        let response = policy_definition_api::create_policy_definition(
+            &provider_configuration,
+            Some(policy_definition.clone()),
+        )
+        .await
+        .unwrap();
 
         assert_eq!(response.at_id.unwrap(), policy_definition_id);
 
-        let response = policy_definition_api::create_policy_definition(&provider_configuration, Some(policy_definition)).await;
+        let response = policy_definition_api::create_policy_definition(
+            &provider_configuration,
+            Some(policy_definition),
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
@@ -91,8 +111,10 @@ mod policy_definition_api_request_test {
     async fn test_request_policy_definition() {
         let provider_configuration = setup_provider_configuration();
 
-        let (_, first_policy_definition_id, _)  = setup_random_contract_definition(&provider_configuration).await;
-        let (_, second_policy_definition_id, _) = setup_random_contract_definition(&provider_configuration).await;
+        let (_, first_policy_definition_id, _) =
+            setup_random_contract_definition(&provider_configuration).await;
+        let (_, second_policy_definition_id, _) =
+            setup_random_contract_definition(&provider_configuration).await;
 
         let criterion = Criterion {
             at_type: None,
@@ -102,7 +124,10 @@ mod policy_definition_api_request_test {
         };
 
         let query = QuerySpec {
-            at_context: Some(std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))])),
+            at_context: Some(std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )])),
             at_type: Some("QuerySpec".to_string()),
             filter_expression: vec![criterion],
             limit: None,
@@ -111,7 +136,10 @@ mod policy_definition_api_request_test {
             sort_order: None,
         };
 
-        let response = policy_definition_api::query_policy_definitions(&provider_configuration, Some(query)).await.unwrap();
+        let response =
+            policy_definition_api::query_policy_definitions(&provider_configuration, Some(query))
+                .await
+                .unwrap();
 
         assert_eq!(response.len(), 1);
         let pulled_id = response.first().unwrap().at_id.as_ref().unwrap();
@@ -125,15 +153,21 @@ mod policy_definition_api_get_test {
     extern crate edc_client;
 
     use crate::common::{setup_provider_configuration, setup_random_contract_definition};
-    use edc_client::{Error, policy_definition_api};
+    use edc_client::{policy_definition_api, Error};
 
     #[tokio::test]
     async fn test_get_policy_definition() {
         let provider_configuration = setup_provider_configuration();
 
-        let (_, policy_definition_id, _) = setup_random_contract_definition(&provider_configuration).await;
+        let (_, policy_definition_id, _) =
+            setup_random_contract_definition(&provider_configuration).await;
 
-        let response = policy_definition_api::get_policy_definition(&provider_configuration, &policy_definition_id).await.unwrap();
+        let response = policy_definition_api::get_policy_definition(
+            &provider_configuration,
+            &policy_definition_id,
+        )
+        .await
+        .unwrap();
 
         assert_eq!(response.at_id.unwrap(), policy_definition_id);
     }
@@ -142,13 +176,17 @@ mod policy_definition_api_get_test {
     async fn test_get_non_existing_policy_definition() {
         let provider_configuration = setup_provider_configuration();
 
-        let response = policy_definition_api::get_policy_definition(&provider_configuration, "non-existing-id").await;
+        let response = policy_definition_api::get_policy_definition(
+            &provider_configuration,
+            "non-existing-id",
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the policy definition does not exist"),
         }
     }
@@ -161,14 +199,15 @@ mod policy_definition_api_update_test {
 
     use crate::common::{setup_provider_configuration, setup_random_contract_definition};
     use edc_api::PolicyDefinitionInput;
-    use edc_client::{Error, policy_definition_api};
+    use edc_client::{policy_definition_api, Error};
     use odrl::name_spaces::EDC_NS;
 
     #[tokio::test]
     async fn test_update_policy_definition() {
         let provider_configuration = setup_provider_configuration();
 
-        let (_, policy_definition_id, _) = setup_random_contract_definition(&provider_configuration).await;
+        let (_, policy_definition_id, _) =
+            setup_random_contract_definition(&provider_configuration).await;
 
         let test_policy = r#"
         {
@@ -183,13 +222,21 @@ mod policy_definition_api_update_test {
         "#;
 
         let policy_definition = PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(policy_definition_id.clone()),
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::from_str(test_policy).unwrap(),
         };
 
-        let response = policy_definition_api::update_policy_definition(&provider_configuration, &policy_definition_id, Some(policy_definition)).await;
+        let response = policy_definition_api::update_policy_definition(
+            &provider_configuration,
+            &policy_definition_id,
+            Some(policy_definition),
+        )
+        .await;
         assert!(response.is_ok());
     }
 
@@ -207,19 +254,27 @@ mod policy_definition_api_update_test {
         "#;
 
         let policy_definition = PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some("non-existing-id".to_string()),
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::from_str(test_policy).unwrap(),
         };
 
-        let response = policy_definition_api::update_policy_definition(&provider_configuration, "non-existing-id", Some(policy_definition)).await;
+        let response = policy_definition_api::update_policy_definition(
+            &provider_configuration,
+            "non-existing-id",
+            Some(policy_definition),
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the policy definition does not exist"),
         }
     }
@@ -230,11 +285,11 @@ mod policy_definition_api_delete_test {
     extern crate edc_api;
     extern crate edc_client;
 
-    use uuid::Uuid;
-    use edc_api::PolicyDefinitionInput;
     use crate::common::{setup_provider_configuration, setup_random_contract_definition};
-    use edc_client::{Error, policy_definition_api};
+    use edc_api::PolicyDefinitionInput;
+    use edc_client::{policy_definition_api, Error};
     use odrl::name_spaces::EDC_NS;
+    use uuid::Uuid;
 
     #[tokio::test]
     async fn test_delete_policy_definition() {
@@ -252,16 +307,27 @@ mod policy_definition_api_delete_test {
         "#;
 
         let policy_definition = PolicyDefinitionInput {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )]),
             at_id: Some(policy_definition_id.clone()),
             at_type: Some("PolicyDefinition".to_string()),
             policy: serde_json::from_str(test_policy).unwrap(),
         };
 
-        let push_policy = policy_definition_api::create_policy_definition(&provider_configuration, Some(policy_definition)).await;
+        let push_policy = policy_definition_api::create_policy_definition(
+            &provider_configuration,
+            Some(policy_definition),
+        )
+        .await;
         assert!(push_policy.is_ok());
 
-        let response = policy_definition_api::delete_policy_definition(&provider_configuration, &policy_definition_id).await;
+        let response = policy_definition_api::delete_policy_definition(
+            &provider_configuration,
+            &policy_definition_id,
+        )
+        .await;
 
         assert!(response.is_ok());
     }
@@ -270,13 +336,17 @@ mod policy_definition_api_delete_test {
     async fn test_delete_non_existing_policy_definition() {
         let provider_configuration = setup_provider_configuration();
 
-        let response = policy_definition_api::delete_policy_definition(&provider_configuration, "non-existing-id").await;
+        let response = policy_definition_api::delete_policy_definition(
+            &provider_configuration,
+            "non-existing-id",
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::NOT_FOUND);
-            },
+            }
             _ => panic!("Expected Status Code 404, because the policy definition does not exist"),
         }
     }
@@ -285,15 +355,20 @@ mod policy_definition_api_delete_test {
     async fn test_delete_policy_definition_of_contract() {
         let provider_configuration = setup_provider_configuration();
 
-        let (_, policy_definition_id, _) = setup_random_contract_definition(&provider_configuration).await;
+        let (_, policy_definition_id, _) =
+            setup_random_contract_definition(&provider_configuration).await;
 
-        let response = policy_definition_api::delete_policy_definition(&provider_configuration, &policy_definition_id).await;
+        let response = policy_definition_api::delete_policy_definition(
+            &provider_configuration,
+            &policy_definition_id,
+        )
+        .await;
 
         assert!(response.is_err());
         match response {
             Err(Error::ResponseError(response)) => {
                 assert_eq!(response.status, reqwest::StatusCode::CONFLICT);
-            },
+            }
             _ => panic!("Expected Status Code 409, because the policy definition is still in use"),
         }
     }

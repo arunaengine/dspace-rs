@@ -15,13 +15,13 @@ pub mod catalog {
     pub mod catalog;
     pub use self::catalog::Catalog;
     pub mod dataset;
-    pub use self::dataset::Dataset;
     pub use self::dataset::AbstractDataset;
-    pub use self::dataset::Resource;
-    pub use self::dataset::Distribution;
     pub use self::dataset::DataService;
-    pub use self::dataset::Reference;
+    pub use self::dataset::Dataset;
+    pub use self::dataset::Distribution;
     pub use self::dataset::MultiLanguage;
+    pub use self::dataset::Reference;
+    pub use self::dataset::Resource;
     pub mod catalog_error;
     pub use self::catalog_error::CatalogError;
 }
@@ -44,29 +44,29 @@ pub mod contract_negotiation {
     pub mod contract_negotiation_error;
     pub use self::contract_negotiation_error::ContractNegotiationError;
     pub mod contract;
-    pub use self::contract::Policy;
-    pub use self::contract::PolicyClass;
     pub use self::contract::AbstractPolicyRule;
+    pub use self::contract::Action;
+    pub use self::contract::Agreement;
+    pub use self::contract::Constraint;
+    pub use self::contract::Duty;
+    pub use self::contract::LeftOperand;
     pub use self::contract::MessageOffer;
     pub use self::contract::Offer;
-    pub use self::contract::Agreement;
-    pub use self::contract::RuleClass;
-    pub use self::contract::Permission;
-    pub use self::contract::Duty;
-    pub use self::contract::Action;
-    pub use self::contract::Constraint;
     pub use self::contract::Operator;
-    pub use self::contract::RightOperand;
-    pub use self::contract::LeftOperand;
+    pub use self::contract::Permission;
+    pub use self::contract::Policy;
+    pub use self::contract::PolicyClass;
     pub use self::contract::Reference;
+    pub use self::contract::RightOperand;
+    pub use self::contract::RuleClass;
     pub use self::contract::Target;
 }
 
 pub mod transfer_process {
     pub mod transfer_request_message;
-    pub use self::transfer_request_message::TransferRequestMessage;
     pub use self::transfer_request_message::DataAddress;
     pub use self::transfer_request_message::EndpointProperty;
+    pub use self::transfer_request_message::TransferRequestMessage;
     pub mod transfer_start_message;
     pub use self::transfer_start_message::TransferStartMessage;
     pub mod transfer_suspension_message;

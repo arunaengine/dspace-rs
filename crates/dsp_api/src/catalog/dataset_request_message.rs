@@ -24,8 +24,11 @@ pub struct DatasetRequestMessage {
 }
 
 impl DatasetRequestMessage {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, dataset: String) -> DatasetRequestMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        dataset: String,
+    ) -> DatasetRequestMessage {
         DatasetRequestMessage {
             context,
             dsp_type,
@@ -35,10 +38,14 @@ impl DatasetRequestMessage {
 
     pub fn default() -> DatasetRequestMessage {
         DatasetRequestMessage {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/dspace/2024/1/context.json".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(
+                    "https://w3id.org/dspace/2024/1/context.json".to_string(),
+                ),
+            )]),
             dsp_type: "dspace:DatasetRequestMessage".to_string(),
             dataset: String::new(),
         }
     }
-
 }

@@ -74,7 +74,10 @@ pub struct Distribution {
 pub struct DataService {
     #[serde(flatten)]
     pub resource: Resource,
-    #[serde(rename = "dcat:endpointDescription", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "dcat:endpointDescription",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub endpoint_description: Option<String>,
     #[serde(rename = "dcat:endpointURL", skip_serializing_if = "Option::is_none")]
     pub endpoint_url: Option<String>,
@@ -98,14 +101,16 @@ pub struct MultiLanguage {
 
 impl Dataset {
     pub fn new(abstract_dataset: AbstractDataset) -> Dataset {
-        Dataset {
-            abstract_dataset,
-        }
+        Dataset { abstract_dataset }
     }
 }
 
 impl AbstractDataset {
-    pub fn new(resource: Resource, policies: Option<Vec<Offer>>, distributions: Option<Vec<Distribution>>) -> AbstractDataset {
+    pub fn new(
+        resource: Resource,
+        policies: Option<Vec<Offer>>,
+        distributions: Option<Vec<Distribution>>,
+    ) -> AbstractDataset {
         AbstractDataset {
             resource,
             policies,
@@ -115,9 +120,18 @@ impl AbstractDataset {
 }
 
 impl Resource {
-    pub fn new(id: Option<String>, keywords: Option<Vec<String>>, themes: Option<Vec<Reference>>, conforms_to: Option<String>, creator: Option<String>,
-               descriptions: Option<Vec<MultiLanguage>>, identifier: Option<String>, issued: Option<String>, modified: Option<String>,
-               title: Option<String>) -> Resource {
+    pub fn new(
+        id: Option<String>,
+        keywords: Option<Vec<String>>,
+        themes: Option<Vec<Reference>>,
+        conforms_to: Option<String>,
+        creator: Option<String>,
+        descriptions: Option<Vec<MultiLanguage>>,
+        identifier: Option<String>,
+        issued: Option<String>,
+        modified: Option<String>,
+        title: Option<String>,
+    ) -> Resource {
         Resource {
             id,
             keywords,
@@ -134,8 +148,14 @@ impl Resource {
 }
 
 impl Distribution {
-    pub fn new(title: Option<String>, descriptions: Vec<MultiLanguage>, issued: Option<String>, modified: Option<String>,
-               policy: Vec<Offer>, access_services: Vec<DataService>) -> Distribution {
+    pub fn new(
+        title: Option<String>,
+        descriptions: Vec<MultiLanguage>,
+        issued: Option<String>,
+        modified: Option<String>,
+        policy: Vec<Offer>,
+        access_services: Vec<DataService>,
+    ) -> Distribution {
         Distribution {
             title,
             descriptions,
@@ -148,7 +168,12 @@ impl Distribution {
 }
 
 impl DataService {
-    pub fn new(resource: Resource, endpoint_description: Option<String>, endpoint_url: Option<String>, serves_datasets: Option<Vec<Dataset>>) -> DataService {
+    pub fn new(
+        resource: Resource,
+        endpoint_description: Option<String>,
+        endpoint_url: Option<String>,
+        serves_datasets: Option<Vec<Dataset>>,
+    ) -> DataService {
         DataService {
             resource,
             endpoint_description,
@@ -160,17 +185,12 @@ impl DataService {
 
 impl Reference {
     pub fn new(id: String) -> Reference {
-        Reference {
-            id,
-        }
+        Reference { id }
     }
 }
 
 impl MultiLanguage {
     pub fn new(value: String, language: String) -> MultiLanguage {
-        MultiLanguage {
-            value,
-            language,
-        }
+        MultiLanguage { value, language }
     }
 }

@@ -1,6 +1,6 @@
 use regex::Regex;
-use thiserror::Error;
 use serde_with::{formats::PreferMany, serde_as, OneOrMany};
+use thiserror::Error;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Policy {
@@ -10,9 +10,7 @@ pub struct Policy {
 
 impl Policy {
     pub fn new(policy_type: PolicyType) -> Policy {
-        Policy {
-            policy_type,
-        }
+        Policy { policy_type }
     }
 }
 
@@ -32,9 +30,7 @@ pub struct Target {
 
 impl Target {
     pub fn new(id: String) -> Target {
-        Target {
-            id,
-        }
+        Target { id }
     }
 }
 
@@ -59,7 +55,14 @@ pub struct PolicyClass {
 }
 
 impl PolicyClass {
-    pub fn new(abstract_policy_rule: AbstractPolicyRule, id: String, profile: Vec<Reference>, permission: Vec<Permission>, obligation: Vec<Duty>, target: Target) -> PolicyClass {
+    pub fn new(
+        abstract_policy_rule: AbstractPolicyRule,
+        id: String,
+        profile: Vec<Reference>,
+        permission: Vec<Permission>,
+        obligation: Vec<Duty>,
+        target: Target,
+    ) -> PolicyClass {
         PolicyClass {
             abstract_policy_rule,
             id,
@@ -81,10 +84,7 @@ pub struct AbstractPolicyRule {
 
 impl AbstractPolicyRule {
     pub fn new(assigner: Option<String>, assignee: Option<String>) -> AbstractPolicyRule {
-        AbstractPolicyRule {
-            assigner,
-            assignee,
-        }
+        AbstractPolicyRule { assigner, assignee }
     }
 }
 
@@ -129,13 +129,22 @@ pub struct Agreement {
     pub id: String,
     #[serde(rename = "odrl:target")]
     pub target: String,
-    #[serde(rename = "dspace:timestamp", skip_serializing_if = "Option::is_none", with = "timestamp_format")]
+    #[serde(
+        rename = "dspace:timestamp",
+        skip_serializing_if = "Option::is_none",
+        with = "timestamp_format"
+    )]
     pub timestamp: Option<String>,
 }
 
 impl Agreement {
-    pub fn new(policy_class: PolicyClass, odrl_type: String, id: String, target: String, timestamp: Option<String>,) -> Result<Agreement, TimestampError> {
-
+    pub fn new(
+        policy_class: PolicyClass,
+        odrl_type: String,
+        id: String,
+        target: String,
+        timestamp: Option<String>,
+    ) -> Result<Agreement, TimestampError> {
         // Validate the timestamp format if it is present
         if let Some(ref ts) = timestamp {
             let timestamp_pattern = r"-?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?|(24:00:00(\\.0+)?))(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?";
@@ -169,7 +178,11 @@ pub struct RuleClass {
 }
 
 impl RuleClass {
-    pub fn new(abstract_policy_rule: AbstractPolicyRule, action: Action, constraint: Vec<Constraint>) -> RuleClass {
+    pub fn new(
+        abstract_policy_rule: AbstractPolicyRule,
+        action: Action,
+        constraint: Vec<Constraint>,
+    ) -> RuleClass {
         RuleClass {
             abstract_policy_rule,
             action,
@@ -193,7 +206,12 @@ pub struct Permission {
 }
 
 impl Permission {
-    pub fn new(abstract_policy_rule: AbstractPolicyRule, action: Action, constraint: Vec<Constraint>, duty: Option<Duty>) -> Permission {
+    pub fn new(
+        abstract_policy_rule: AbstractPolicyRule,
+        action: Action,
+        constraint: Vec<Constraint>,
+        duty: Option<Duty>,
+    ) -> Permission {
         Permission {
             abstract_policy_rule,
             action,
@@ -218,7 +236,12 @@ pub struct Duty {
 }
 
 impl Duty {
-    pub fn new(abstract_policy_rule: AbstractPolicyRule, id: Option<String>, action: Action, constraint: Vec<Constraint>) -> Duty {
+    pub fn new(
+        abstract_policy_rule: AbstractPolicyRule,
+        id: Option<String>,
+        action: Action,
+        constraint: Vec<Constraint>,
+    ) -> Duty {
         Duty {
             abstract_policy_rule,
             id,
@@ -336,7 +359,10 @@ pub enum Action {
 pub struct Constraint {
     #[serde(rename = "odrl:rightOperand", skip_serializing_if = "Option::is_none")]
     pub right_operand: Option<RightOperand>,
-    #[serde(rename = "odrl:rightOperandReference", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "odrl:rightOperandReference",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub right_operand_reference: Option<Reference>,
     #[serde(rename = "odrl:leftOperand")]
     pub left_operand: LeftOperand,
@@ -345,7 +371,12 @@ pub struct Constraint {
 }
 
 impl Constraint {
-    pub fn new(right_operand: Option<RightOperand>, right_operand_reference: Option<Reference>, left_operand: LeftOperand, operator: Operator) -> Constraint {
+    pub fn new(
+        right_operand: Option<RightOperand>,
+        right_operand_reference: Option<Reference>,
+        left_operand: LeftOperand,
+        operator: Operator,
+    ) -> Constraint {
         Constraint {
             right_operand,
             right_operand_reference,
@@ -468,12 +499,9 @@ pub struct Reference {
 
 impl Reference {
     pub fn new(id: String) -> Reference {
-        Reference {
-            id,
-        }
+        Reference { id }
     }
 }
-
 
 #[derive(Debug, Error)]
 pub enum TimestampError {
@@ -504,7 +532,10 @@ mod timestamp_format {
         if let Some(ref ts) = timestamp {
             Agreement::new(
                 PolicyClass {
-                    abstract_policy_rule: AbstractPolicyRule { assigner: None, assignee: None },
+                    abstract_policy_rule: AbstractPolicyRule {
+                        assigner: None,
+                        assignee: None,
+                    },
                     id: String::new(),
                     profile: vec![],
                     permission: vec![],
@@ -515,7 +546,8 @@ mod timestamp_format {
                 String::new(),
                 String::new(),
                 Some(ts.clone()),
-            ).map_err(serde::de::Error::custom)?;
+            )
+            .map_err(serde::de::Error::custom)?;
         }
         Ok(timestamp)
     }

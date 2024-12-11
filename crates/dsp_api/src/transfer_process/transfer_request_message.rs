@@ -55,7 +55,10 @@ pub struct DataAddress {
     pub endpoint_type: String,
     #[serde(rename = "dspace:endpoint")]
     pub endpoint: String,
-    #[serde(rename = "dspace:endpointProperties", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "dspace:endpointProperties",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub endpoint_properties: Option<Vec<EndpointProperty>>,
 }
 

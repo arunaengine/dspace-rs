@@ -7,7 +7,6 @@
  *
  */
 
-
 use serde::{Deserialize, Deserializer};
 use utoipa::ToSchema;
 
@@ -23,7 +22,10 @@ pub struct DataPlaneInstanceSchema {
     pub allowed_dest_types: Vec<String>,
     #[serde(rename = "allowedSourceTypes", deserialize_with = "string_or_vec")]
     pub allowed_source_types: Vec<String>,
-    #[serde(rename = "allowedTransferTypes", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "allowedTransferTypes",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub allowed_transfer_types: Option<Vec<String>>,
     #[serde(rename = "lastActive", skip_serializing_if = "Option::is_none")]
     pub last_active: Option<i64>,
@@ -53,15 +55,25 @@ where
             .collect();
         strings
     } else {
-        Err(serde::de::Error::custom("Expected either a string or an array of strings"))
+        Err(serde::de::Error::custom(
+            "Expected either a string or an array of strings",
+        ))
     }
 }
 
 impl DataPlaneInstanceSchema {
-
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, at_id: Option<String>, at_type: Option<String>, allowed_dest_types: Vec<String>,
-               allowed_source_types: Vec<String>, allowed_transfer_types: Option<Vec<String>>, last_active: Option<i64>, turn_count: Option<i32>, url: String,
-               properties: Option<std::collections::HashMap<String, serde_json::Value>>) -> DataPlaneInstanceSchema {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        at_id: Option<String>,
+        at_type: Option<String>,
+        allowed_dest_types: Vec<String>,
+        allowed_source_types: Vec<String>,
+        allowed_transfer_types: Option<Vec<String>>,
+        last_active: Option<i64>,
+        turn_count: Option<i32>,
+        url: String,
+        properties: Option<std::collections::HashMap<String, serde_json::Value>>,
+    ) -> DataPlaneInstanceSchema {
         DataPlaneInstanceSchema {
             context,
             at_id,
@@ -78,7 +90,10 @@ impl DataPlaneInstanceSchema {
 
     pub fn default() -> DataPlaneInstanceSchema {
         DataPlaneInstanceSchema {
-            context: std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()))]),
+            context: std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
+            )]),
             at_type: Some("DataPlaneInstance".to_string()),
             at_id: None,
             allowed_dest_types: Vec::new(),
@@ -90,5 +105,4 @@ impl DataPlaneInstanceSchema {
             properties: None,
         }
     }
-
 }

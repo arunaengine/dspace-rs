@@ -1,13 +1,11 @@
-use utoipa::ToSchema;
 use crate::model::type_alias::IRI;
+use utoipa::ToSchema;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum LeftOperand {
-
     Literal(String),
     IRI(IRI),
     Reference(IRI),
-
 }
 
 impl Default for LeftOperand {
@@ -18,7 +16,6 @@ impl Default for LeftOperand {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum Operator {
-
     #[serde(rename = "eq")]
     Equal,
     #[serde(rename = "neq")]
@@ -43,7 +40,6 @@ pub enum Operator {
     IsNoneOf,
     #[serde(rename = "isPartOf")]
     IsPartOf,
-
 }
 
 impl Default for Operator {
@@ -54,11 +50,9 @@ impl Default for Operator {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum RightOperand {
-
     Literal(String),
     IRI(IRI),
     Reference(IRI),
-
 }
 
 impl Default for RightOperand {
@@ -69,7 +63,6 @@ impl Default for RightOperand {
 
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct Constraint {
-
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
     #[serde(rename = "leftOperand")]
@@ -83,11 +76,9 @@ pub struct Constraint {
     pub unit: Option<IRI>,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub status: String,
-
 }
 
 impl Constraint {
-
     pub fn new(
         uid: Option<IRI>,
         left_operand: LeftOperand,
@@ -97,7 +88,6 @@ impl Constraint {
         unit: Option<IRI>,
         status: String,
     ) -> Constraint {
-
         Constraint {
             uid,
             left_operand,
@@ -108,12 +98,10 @@ impl Constraint {
             status,
         }
     }
-
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
 pub enum LogicalOperator {
-
     #[serde(rename = "or")]
     Or, // at least one of the Constraints MUST be satisfied
     #[serde(rename = "xone")]
@@ -122,7 +110,7 @@ pub enum LogicalOperator {
     And, // all of the Constraints MUST be satisfied
     #[serde(rename = "andSequence")]
     AndSequence, // all of the Constraints - in sequence - MUST be satisfied
-    // Add other logical operators as needed
+                 // Add other logical operators as needed
 }
 
 impl Default for LogicalOperator {
@@ -133,22 +121,17 @@ impl Default for LogicalOperator {
 
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, ToSchema)]
 pub struct LogicalConstraint {
-
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub operand: Option<(LogicalOperator, Vec<IRI>)>,
-
 }
 
 impl LogicalConstraint {
-
-
-    pub fn new(uid: Option<IRI>, operand: Option<(LogicalOperator, Vec<IRI>)>) -> LogicalConstraint {
-        LogicalConstraint {
-            uid,
-            operand
-        }
+    pub fn new(
+        uid: Option<IRI>,
+        operand: Option<(LogicalOperator, Vec<IRI>)>,
+    ) -> LogicalConstraint {
+        LogicalConstraint { uid, operand }
     }
-
 }

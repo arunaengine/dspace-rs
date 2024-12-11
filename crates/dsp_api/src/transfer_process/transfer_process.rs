@@ -6,8 +6,8 @@
  * The Transfer Process is an object returned by a Consumer or Provider indicating a successful state change happened.
  */
 
-use serde::{Deserialize, Deserializer, Serialize};
 use serde::de::{self, Unexpected};
+use serde::{Deserialize, Deserializer, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TransferProcess {
@@ -19,7 +19,10 @@ pub struct TransferProcess {
     pub provider_pid: String,
     #[serde(rename = "dspace:consumerPid")]
     pub consumer_pid: String,
-    #[serde(rename = "dspace:state", deserialize_with = "deserialize_transfer_state_type")]
+    #[serde(
+        rename = "dspace:state",
+        deserialize_with = "deserialize_transfer_state_type"
+    )]
     pub state: TransferStateType,
 }
 
@@ -31,15 +34,30 @@ pub enum TransferStateType {
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum TransferState {
-    #[serde(rename = "dspace:REQUESTED", alias = "https://w3id.org/dspace/v0.8/REQUESTED")]
+    #[serde(
+        rename = "dspace:REQUESTED",
+        alias = "https://w3id.org/dspace/v0.8/REQUESTED"
+    )]
     REQUESTED,
-    #[serde(rename = "dspace:STARTED", alias = "https://w3id.org/dspace/v0.8/STARTED")]
+    #[serde(
+        rename = "dspace:STARTED",
+        alias = "https://w3id.org/dspace/v0.8/STARTED"
+    )]
     STARTED,
-    #[serde(rename = "dspace:TERMINATED", alias = "https://w3id.org/dspace/v0.8/TERMINATED")]
+    #[serde(
+        rename = "dspace:TERMINATED",
+        alias = "https://w3id.org/dspace/v0.8/TERMINATED"
+    )]
     TERMINATED,
-    #[serde(rename = "dspace:COMPLETED", alias = "https://w3id.org/dspace/v0.8/COMPLETED")]
+    #[serde(
+        rename = "dspace:COMPLETED",
+        alias = "https://w3id.org/dspace/v0.8/COMPLETED"
+    )]
     COMPLETED,
-    #[serde(rename = "dspace:SUSPENDED", alias = "https://w3id.org/dspace/v0.8/SUSPENDED")]
+    #[serde(
+        rename = "dspace:SUSPENDED",
+        alias = "https://w3id.org/dspace/v0.8/SUSPENDED"
+    )]
     SUSPENDED,
 }
 
@@ -92,36 +110,93 @@ where
 {
     let value: &str = Deserialize::deserialize(deserializer)?;
     match value {
-        "dspace:REQUESTED" | "https://w3id.org/dspace/v0.8/REQUESTED" => Ok(TransferStateType::TransferState(TransferState::REQUESTED)),
-        "dspace:STARTED" | "https://w3id.org/dspace/v0.8/STARTED" => Ok(TransferStateType::TransferState(TransferState::STARTED)),
-        "dspace:TERMINATED" | "https://w3id.org/dspace/v0.8/TERMINATED" => Ok(TransferStateType::TransferState(TransferState::TERMINATED)),
-        "dspace:COMPLETED" | "https://w3id.org/dspace/v0.8/COMPLETED" => Ok(TransferStateType::TransferState(TransferState::COMPLETED)),
-        "dspace:SUSPENDED" | "https://w3id.org/dspace/v0.8/SUSPENDED" => Ok(TransferStateType::TransferState(TransferState::SUSPENDED)),
-        "INITIAL" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Initial)),
-        "PROVISIONING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Provisioning)),
-        "PROVISIONING_REQUESTED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::ProvisioningRequested)),
-        "PROVISIONED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Provisioned)),
-        "REQUESTING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Requesting)),
-        "REQUESTED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Requested)),
-        "STARTING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Starting)),
-        "STARTED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Started)),
-        "SUSPENDING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Suspending)),
-        "SUSPENDED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Suspended)),
-        "RESUMING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Resuming)),
-        "RESUMED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Resumed)),
-        "COMPLETING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Completing)),
-        "COMPLETED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Completed)),
-        "TERMINATING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Terminating)),
-        "TERMINATED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Terminated)),
-        "DEPROVISIONING" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Deprovisioning)),
-        "DEPROVISIONING_REQUESTED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::DeprovisioningRequested)),
-        "DEPROVISIONED" => Ok(TransferStateType::EDCTransferState(EDCTransferState::Deprovisioned)),
-        _ => Err(de::Error::invalid_value(Unexpected::Str(value), &"a valid state")),
+        "dspace:REQUESTED" | "https://w3id.org/dspace/v0.8/REQUESTED" => {
+            Ok(TransferStateType::TransferState(TransferState::REQUESTED))
+        }
+        "dspace:STARTED" | "https://w3id.org/dspace/v0.8/STARTED" => {
+            Ok(TransferStateType::TransferState(TransferState::STARTED))
+        }
+        "dspace:TERMINATED" | "https://w3id.org/dspace/v0.8/TERMINATED" => {
+            Ok(TransferStateType::TransferState(TransferState::TERMINATED))
+        }
+        "dspace:COMPLETED" | "https://w3id.org/dspace/v0.8/COMPLETED" => {
+            Ok(TransferStateType::TransferState(TransferState::COMPLETED))
+        }
+        "dspace:SUSPENDED" | "https://w3id.org/dspace/v0.8/SUSPENDED" => {
+            Ok(TransferStateType::TransferState(TransferState::SUSPENDED))
+        }
+        "INITIAL" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Initial,
+        )),
+        "PROVISIONING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Provisioning,
+        )),
+        "PROVISIONING_REQUESTED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::ProvisioningRequested,
+        )),
+        "PROVISIONED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Provisioned,
+        )),
+        "REQUESTING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Requesting,
+        )),
+        "REQUESTED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Requested,
+        )),
+        "STARTING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Starting,
+        )),
+        "STARTED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Started,
+        )),
+        "SUSPENDING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Suspending,
+        )),
+        "SUSPENDED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Suspended,
+        )),
+        "RESUMING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Resuming,
+        )),
+        "RESUMED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Resumed,
+        )),
+        "COMPLETING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Completing,
+        )),
+        "COMPLETED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Completed,
+        )),
+        "TERMINATING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Terminating,
+        )),
+        "TERMINATED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Terminated,
+        )),
+        "DEPROVISIONING" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Deprovisioning,
+        )),
+        "DEPROVISIONING_REQUESTED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::DeprovisioningRequested,
+        )),
+        "DEPROVISIONED" => Ok(TransferStateType::EDCTransferState(
+            EDCTransferState::Deprovisioned,
+        )),
+        _ => Err(de::Error::invalid_value(
+            Unexpected::Str(value),
+            &"a valid state",
+        )),
     }
 }
 
 impl TransferProcess {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String, state: TransferStateType) -> TransferProcess {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        state: TransferStateType,
+    ) -> TransferProcess {
         TransferProcess {
             context,
             dsp_type,

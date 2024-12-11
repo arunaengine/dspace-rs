@@ -14,17 +14,24 @@ pub struct TransferError {
     #[serde(rename = "@type")]
     pub dsp_type: String,
     #[serde(rename = "dspace:providerPid")]
-    pub provider_pid: String,   // The TF unique id on Provider side.
+    pub provider_pid: String, // The TF unique id on Provider side.
     #[serde(rename = "dspace:consumerPid")]
-    pub consumer_pid: String,   // The TF unique id on Consumer side.
+    pub consumer_pid: String, // The TF unique id on Consumer side.
     #[serde(rename = "dspace:code", skip_serializing_if = "Option::is_none")]
-    pub code: Option<String>,   // An optional implementation-specific error code.
+    pub code: Option<String>, // An optional implementation-specific error code.
     #[serde(rename = "dspace:reason", skip_serializing_if = "Vec::is_empty")]
-    pub reason: Vec<String>,    // An optional array of implementation-specific error objects.
+    pub reason: Vec<String>, // An optional array of implementation-specific error objects.
 }
 
 impl TransferError {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String, code: Option<String>, reason: Vec<String>) -> TransferError {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+        code: Option<String>,
+        reason: Vec<String>,
+    ) -> TransferError {
         TransferError {
             context,
             dsp_type,

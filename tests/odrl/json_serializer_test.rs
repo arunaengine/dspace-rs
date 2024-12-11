@@ -6,10 +6,12 @@ mod json_serializer_test {
 
     use odrl::model::action::{Action, Refinements};
     use odrl::model::asset::Asset;
-    use odrl::model::constraint::{Constraint, LeftOperand, Operator, RightOperand, LogicalConstraint, LogicalOperator};
+    use odrl::model::constraint::{
+        Constraint, LeftOperand, LogicalConstraint, LogicalOperator, Operator, RightOperand,
+    };
     use odrl::model::party::Party;
-    use odrl::model::policy::{SetPolicy, OfferPolicy, AgreementPolicy};
-    use odrl::model::rule::{Rule, Permission, Prohibition, Obligation, Duty};
+    use odrl::model::policy::{AgreementPolicy, OfferPolicy, SetPolicy};
+    use odrl::model::rule::{Duty, Obligation, Permission, Prohibition, Rule};
 
     #[test]
     fn test_set_policy_with_one_rule_serialize() {
@@ -33,7 +35,8 @@ mod json_serializer_test {
             "target": "https://example.com/asset:9898.movie",
             "action": "use"
             }]
-        }"#.to_string();
+        }"#
+        .to_string();
 
         assert_eq!(
             serialized_policy.parse::<serde_json::Value>().unwrap(),
@@ -59,7 +62,10 @@ mod json_serializer_test {
 
         let mut policy = SetPolicy::default();
         policy.uid = "https://example.com/policy:1010".to_string();
-        policy.rules = vec![Rule::Permission(permission_1), Rule::Permission(permission_2)];
+        policy.rules = vec![
+            Rule::Permission(permission_1),
+            Rule::Permission(permission_2),
+        ];
 
         let serialized_policy = serde_json::to_string_pretty(&policy).unwrap();
         let expected_policy = r#"
@@ -76,7 +82,8 @@ mod json_serializer_test {
                     "action": "use"
                 }
             ]
-        }"#.to_string();
+        }"#
+        .to_string();
 
         assert_eq!(
             serialized_policy.parse::<serde_json::Value>().unwrap(),
@@ -86,7 +93,6 @@ mod json_serializer_test {
 
     #[test]
     fn test_set_policy_with_several_complex_rules_serialize() {
-
         // Permission 1
         let mut asset_1 = Asset::default();
         asset_1.uid = Some("https://example.com/asset:9898.movie".to_string());
@@ -174,7 +180,13 @@ mod json_serializer_test {
         let mut policy = SetPolicy::default();
         policy.uid = "https://example.com/policy:1011".to_string();
         policy.profiles = vec!["https://example.com/odrl:profile:01".to_string()];
-        policy.rules = vec![Rule::Permission(permission_1), Rule::Permission(permission_2), Rule::Permission(permission_3), Rule::Prohibition(prohibition_1), Rule::Obligation(obligation_1)];
+        policy.rules = vec![
+            Rule::Permission(permission_1),
+            Rule::Permission(permission_2),
+            Rule::Permission(permission_3),
+            Rule::Prohibition(prohibition_1),
+            Rule::Obligation(obligation_1),
+        ];
         let serialized_policy = serde_json::to_string_pretty(&policy).unwrap();
 
         let expected_policy = r#"
@@ -234,7 +246,8 @@ mod json_serializer_test {
                     "target": "https://example.com/document:XZY"
                 }
             ]
-        }"#.to_string();
+        }"#
+        .to_string();
 
         assert_eq!(
             serialized_policy.parse::<serde_json::Value>().unwrap(),
@@ -271,7 +284,8 @@ mod json_serializer_test {
                 "target": "https://example.com/asset:9898.movie",
                 "action": "play"
             }]
-        }"#.to_string();
+        }"#
+        .to_string();
 
         assert_eq!(
             serialized_policy.parse::<serde_json::Value>().unwrap(),
@@ -312,12 +326,12 @@ mod json_serializer_test {
                 "target": "https://example.com/asset:9898.movie",
                 "action": "play"
             }]
-        }"#.to_string();
+        }"#
+        .to_string();
 
         assert_eq!(
             serialized_policy.parse::<serde_json::Value>().unwrap(),
             expected_policy.parse::<serde_json::Value>().unwrap()
         );
     }
-
 }

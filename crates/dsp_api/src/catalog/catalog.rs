@@ -23,16 +23,25 @@ pub struct Catalog {
     #[serde(rename = "dcat:service")]
     #[serde_as(deserialize_as = "OneOrMany<_, PreferMany>")]
     pub service: Vec<DataService>,
-    #[serde(rename = "dspace:participantId", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "dspace:participantId",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub participant_id: Option<String>,
     #[serde(rename = "foaf:homepage", skip_serializing_if = "Option::is_none")]
     pub homepage: Option<String>,
 }
 
 impl Catalog {
-
-    pub fn new(abstract_dataset: AbstractDataset, context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, datasets: Option<Vec<Dataset>>, service: Vec<DataService>,
-               participant_id: Option<String>, homepage: Option<String>) -> Catalog {
+    pub fn new(
+        abstract_dataset: AbstractDataset,
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        datasets: Option<Vec<Dataset>>,
+        service: Vec<DataService>,
+        participant_id: Option<String>,
+        homepage: Option<String>,
+    ) -> Catalog {
         Catalog {
             abstract_dataset,
             context,
@@ -43,5 +52,4 @@ impl Catalog {
             homepage,
         }
     }
-
 }

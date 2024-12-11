@@ -5,9 +5,12 @@ mod edr_cache_test {
     extern crate edc_api;
     extern crate edc_client;
 
-    use crate::common::{setup_consumer_configuration, setup_provider_configuration, setup_random_transfer_process, wait_for_transfer_state};
-    use edc_api::{Criterion, QuerySpec, TransferState};
+    use crate::common::{
+        setup_consumer_configuration, setup_provider_configuration, setup_random_transfer_process,
+        wait_for_transfer_state,
+    };
     use edc_api::transfer_state::TransferProcessState;
+    use edc_api::{Criterion, QuerySpec, TransferState};
     use edc_client::Error;
     use odrl::name_spaces::EDC_NS;
 
@@ -18,9 +21,17 @@ mod edr_cache_test {
 
         let (transfer_process_id, _, _) = setup_random_transfer_process(&consumer, &provider).await;
 
-        wait_for_transfer_state(&consumer, &transfer_process_id.clone(), TransferState { state: TransferProcessState::Started }).await;
+        wait_for_transfer_state(
+            &consumer,
+            &transfer_process_id.clone(),
+            TransferState {
+                state: TransferProcessState::Started,
+            },
+        )
+        .await;
 
-        let data_address = edc_client::edr_cache_api::get_edr_data_address(&consumer, &transfer_process_id).await;
+        let data_address =
+            edc_client::edr_cache_api::get_edr_data_address(&consumer, &transfer_process_id).await;
 
         assert!(data_address.is_ok());
     }
@@ -32,7 +43,8 @@ mod edr_cache_test {
 
         let transfer_process_id = "unknown_transfer";
 
-        let response = edc_client::edr_cache_api::get_edr_data_address(&consumer, &transfer_process_id).await;
+        let response =
+            edc_client::edr_cache_api::get_edr_data_address(&consumer, &transfer_process_id).await;
 
         assert!(response.is_err());
         match response {
@@ -48,9 +60,17 @@ mod edr_cache_test {
         let consumer = setup_consumer_configuration();
         let provider = setup_provider_configuration();
 
-        let (transfer_process_id, _, asset_id) = setup_random_transfer_process(&consumer, &provider).await;
+        let (transfer_process_id, _, asset_id) =
+            setup_random_transfer_process(&consumer, &provider).await;
 
-        wait_for_transfer_state(&consumer, &transfer_process_id.clone(), TransferState { state: TransferProcessState::Started }).await;
+        wait_for_transfer_state(
+            &consumer,
+            &transfer_process_id.clone(),
+            TransferState {
+                state: TransferProcessState::Started,
+            },
+        )
+        .await;
 
         let criterion = Criterion {
             at_type: None,
@@ -60,7 +80,10 @@ mod edr_cache_test {
         };
 
         let query = QuerySpec {
-            at_context: Some(std::collections::HashMap::from([("@vocab".to_string(), serde_json::Value::String(EDC_NS.to_string()))])),
+            at_context: Some(std::collections::HashMap::from([(
+                "@vocab".to_string(),
+                serde_json::Value::String(EDC_NS.to_string()),
+            )])),
             at_type: Some("QuerySpec".to_string()),
             filter_expression: vec![criterion],
             limit: None,

@@ -23,7 +23,12 @@ pub struct TransferCompletionMessage {
 }
 
 impl TransferCompletionMessage {
-    pub fn new(context: std::collections::HashMap<String, serde_json::Value>, dsp_type: String, provider_pid: String, consumer_pid: String) -> TransferCompletionMessage {
+    pub fn new(
+        context: std::collections::HashMap<String, serde_json::Value>,
+        dsp_type: String,
+        provider_pid: String,
+        consumer_pid: String,
+    ) -> TransferCompletionMessage {
         TransferCompletionMessage {
             context,
             dsp_type,

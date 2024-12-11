@@ -21,7 +21,6 @@ pub struct ApiErrorDetail {
 }
 
 impl ApiErrorDetail {
-
     pub fn new() -> ApiErrorDetail {
         ApiErrorDetail {
             invalid_value: None,
@@ -30,5 +29,4 @@ impl ApiErrorDetail {
             r#type: None,
         }
     }
-
 }
