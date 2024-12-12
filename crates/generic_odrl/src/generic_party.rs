@@ -1,6 +1,6 @@
-use serde_derive::{Deserialize, Serialize};
-use odrl::model::constraint::Constraint;
+use crate::generic_constraint::Constraint;
 use odrl::model::type_alias::IRI;
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Function {

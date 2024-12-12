@@ -1,6 +1,6 @@
+use crate::generic_constraint::Constraint;
+use crate::generic_constraint::LogicalConstraint;
 use serde_derive::{Deserialize, Serialize};
-use odrl::model::constraint::Constraint;
-use odrl::model::constraint::LogicalConstraint;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Refinements {
@@ -43,5 +43,4 @@ impl Action {
             implies,
         }
     }
-
 }

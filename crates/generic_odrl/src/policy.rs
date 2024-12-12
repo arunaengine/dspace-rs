@@ -1,11 +1,11 @@
 use crate::{
-    generic_rule::{Obligation, Permission, Prohibition, Rule},
+    generic_action::Action,
+    generic_asset::Asset,
+    generic_party::Party,
+    generic_rule::{Obligation, Permission, Prohibition},
     generics::StringOrX,
 };
-use odrl::model::action::Action;
-use odrl::model::asset::Asset;
 use odrl::model::conflict_term::ConflictTerm;
-use odrl::model::party::Party;
 use odrl::model::type_alias::IRI;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -891,5 +891,4 @@ mod tests {
         "#;
         serde_json::from_str::<super::GenericPolicy>(example).unwrap();
     }
-
 }

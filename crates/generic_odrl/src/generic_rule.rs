@@ -1,8 +1,7 @@
-use odrl::model::action::Action;
-use odrl::model::asset::Asset;
-use odrl::model::asset::AssetType;
-use odrl::model::constraint::Constraint;
-use odrl::model::party::{GenericPartyType, Party, PartyType};
+use crate::generic_action::Action;
+use crate::generic_asset::{Asset, AssetType};
+use crate::generic_constraint::Constraint;
+use crate::generic_party::{Party, PartyType};
 use odrl::model::type_alias::IRI;
 use serde::{Deserialize, Serialize};
 
@@ -20,7 +19,8 @@ pub enum Rule {
 pub struct Permission {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
-    #[serde(skip_serializing_if = "Option::is_none")]   //TODO: Validate action is given if no action is provided top-level (policy)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    //TODO: Validate action is given if no action is provided top-level (policy)
     pub action: Option<StringOrX<Action>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<AssetType>,
@@ -73,7 +73,8 @@ impl Permission {
 pub struct Prohibition {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
-    #[serde(skip_serializing_if = "Option::is_none")]   //TODO: Validate action is given if no action is provided top-level (policy)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    //TODO: Validate action is given if no action is provided top-level (policy)
     pub action: Option<StringOrX<Action>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<Asset>,
@@ -125,7 +126,8 @@ impl Prohibition {
 pub struct Duty {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
-    #[serde(skip_serializing_if = "Option::is_none")]   //TODO: Validate action is given if no action is provided top-level (policy)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    //TODO: Validate action is given if no action is provided top-level (policy)
     pub action: Option<StringOrX<Action>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub relation: Option<Asset>,
@@ -188,9 +190,11 @@ pub struct Obligation {
     pub assigner: Option<StringOrX<Party>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub assignee: Option<StringOrX<Party>>,
-    #[serde(skip_serializing_if = "Option::is_none")]   //TODO: Validate action is given if no action is provided top-level (policy)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    //TODO: Validate action is given if no action is provided top-level (policy)
     pub action: Option<StringOrX<Action>>,
-    #[serde(skip_serializing_if = "Option::is_none")]   //TODO: Json example does not provide a consequence??
+    #[serde(skip_serializing_if = "Option::is_none")]
+    //TODO: Json example does not provide a consequence??
     pub consequence: Option<Vec<Duty>>,
 }
 

@@ -1,5 +1,5 @@
-use serde_derive::{Deserialize, Serialize};
 use odrl::model::type_alias::IRI;
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum LeftOperand {
@@ -111,7 +111,7 @@ pub enum LogicalOperator {
     And, // all of the Constraints MUST be satisfied
     #[serde(rename = "andSequence")]
     AndSequence, // all of the Constraints - in sequence - MUST be satisfied
-    // Add other logical operators as needed
+                 // Add other logical operators as needed
 }
 
 impl Default for LogicalOperator {

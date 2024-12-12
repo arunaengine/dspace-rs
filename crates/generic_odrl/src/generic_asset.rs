@@ -1,7 +1,7 @@
-use serde_derive::{Deserialize, Serialize};
-use odrl::model::constraint::Constraint;
-use odrl::model::policy::Policy;
+use crate::generic_constraint::Constraint;
+use crate::policy::GenericPolicy as Policy;
 use odrl::model::type_alias::IRI;
+use serde_derive::{Deserialize, Serialize};
 
 extern crate edc_api as api;
 
