@@ -1,10 +1,11 @@
-use crate::ResponseContent;
+use crate::{ResponseContent, CONSUMER_ID, PROVIDER_DSP_HOST, PROVIDER_PROTOCOL};
 use crate::{configuration, Error};
 use dsp_models::contract_negotiation::{
     ContractAgreementVerificationMessage, ContractNegotiationEventMessage,
     ContractNegotiationTerminationMessage, ContractRequestMessage,
 };
 use reqwest;
+use reqwest::header::{AUTHORIZATION, HOST};
 
 /// struct for typed errors of method [`get_negotiation`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -78,6 +79,9 @@ pub async fn get_negotiation(
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
 
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
+
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
@@ -118,6 +122,9 @@ pub async fn request_negotiation(
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&request_message);
+
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -166,6 +173,9 @@ pub async fn make_offer(
     }
     local_var_req_builder = local_var_req_builder.json(&request_message);
 
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
+
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
@@ -213,6 +223,9 @@ pub async fn accept_offer(
     }
     local_var_req_builder = local_var_req_builder.json(&event_message);
 
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
+
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
@@ -258,6 +271,9 @@ pub async fn verify_agreement(
     }
     local_var_req_builder = local_var_req_builder.json(&verification_message);
 
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
+
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
@@ -302,6 +318,9 @@ pub async fn terminate_negotiation(
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&termination_message);
+
+    let auth_header = format!("{{\"region\": \"eu\", \"audience\": \"{}\", \"clientId\": \"{}\"}}", PROVIDER_PROTOCOL, CONSUMER_ID);
+    local_var_req_builder = local_var_req_builder.header(AUTHORIZATION, auth_header);
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
