@@ -8,16 +8,13 @@ pub const PROVIDER_ID: &str = "aruna-connector";
 pub const DATASPACE_PROTOCOL: &str = "dataspace-protocol-http";
 
 pub fn setup_provider_configuration() -> Configuration {
-    Configuration::new(
-        "http://localhost:3000".to_string(),
-        Some("okhttp/4.12.0".to_owned()),
-        reqwest::Client::new(),
-        None,
-        None,
-        None,
-        None,
-    )
-    .with_headers()
+    let mut provider = Configuration::default();
+    provider.base_path = "http://localhost:3000".to_string();
+    provider.api_key = Some(ApiKey {
+        prefix: Some("x-api-key".to_string()),
+        key: "123456".to_owned(),
+    });
+    provider.with_headers()
 }
 
 pub async fn setup_consumer_configuration() -> Configuration {
@@ -47,14 +44,11 @@ pub async fn setup_dsp_consumer_configuration() -> dsp_client::configuration::Co
 }
 
 pub async fn setup_dsp_provider_configuration() -> dsp_client::configuration::Configuration {
-    dsp_client::configuration::Configuration::new(
-        "http://localhost:3000".to_string(),
-        Some("okhttp/4.12.0".to_owned()),
-        reqwest::Client::new(),
-        None,
-        None,
-        None,
-        None,
-    )
-    .with_headers()
+    let mut provider = dsp_client::configuration::Configuration::default();
+    provider.base_path = "http://localhost:3000".to_string();
+    provider.api_key = Some(dsp_client::configuration::ApiKey {
+        prefix: Some("x-api-key".to_string()),
+        key: "123456".to_owned(),
+    });
+    provider.with_headers()
 }
