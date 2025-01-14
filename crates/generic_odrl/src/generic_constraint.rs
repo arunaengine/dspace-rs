@@ -1,16 +1,18 @@
 use odrl::model::type_alias::IRI;
 use serde_derive::{Deserialize, Serialize};
 
+use crate::generics::StringOrX;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum LeftOperand {
+pub enum Operand {
     Literal(String),
     IRI(IRI),
     Reference(IRI),
 }
 
-impl Default for LeftOperand {
+impl Default for Operand {
     fn default() -> Self {
-        LeftOperand::Literal("".to_string())
+        Operand::Literal("".to_string())
     }
 }
 
@@ -48,29 +50,16 @@ impl Default for Operator {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum RightOperand {
-    Literal(String),
-    IRI(IRI),
-    Reference(IRI),
-}
-
-impl Default for RightOperand {
-    fn default() -> Self {
-        RightOperand::Literal("".to_string())
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct Constraint {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uid: Option<IRI>,
     #[serde(rename = "leftOperand", skip_serializing_if = "Option::is_none")]
-    pub left_operand: Option<LeftOperand>,
+    pub left_operand: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub operator: Option<Operator>,
     #[serde(rename = "rightOperand", skip_serializing_if = "Option::is_none")]
-    pub right_operand: Option<RightOperand>,
+    pub right_operand: Option<String>,
     #[serde(rename = "dataType", skip_serializing_if = "Option::is_none")]
     pub data_type: Option<IRI>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -82,9 +71,9 @@ pub struct Constraint {
 impl Constraint {
     pub fn new(
         uid: Option<IRI>,
-        left_operand: Option<LeftOperand>,
+        left_operand: Option<String>,
         operator: Option<Operator>,
-        right_operand: Option<RightOperand>,
+        right_operand: Option<String>,
         data_type: Option<IRI>,
         unit: Option<IRI>,
         status: Option<String>,
