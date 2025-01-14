@@ -1,3 +1,5 @@
+pub mod common;
+
 use axum::extract::Path;
 use axum::http::HeaderMap;
 use axum::routing::{delete, put};

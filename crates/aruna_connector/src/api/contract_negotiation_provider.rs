@@ -1,27 +1,75 @@
-use axum::extract::{Path, State};
-use axum::http::{HeaderMap, StatusCode};
+use axum::extract::{ConnectInfo, Path, State};
+use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use axum::response::IntoResponse;
-use axum::Json;
+use axum::{Extension, Json};
 use dsp_api::contract_negotiation::contract_negotiation::NegotiationState;
+use dsp_api::contract_negotiation::contract_negotiation_event_message::EventType;
 use dsp_api::contract_negotiation::{
-    AbstractPolicyRule, Action, ContractNegotiation, ContractNegotiationTerminationMessage,
-    ContractOfferMessage, MessageOffer, Permission, PolicyClass, Target,
+    AbstractPolicyRule, Action, Agreement, ContractAgreementMessage, ContractNegotiation,
+    ContractNegotiationEventMessage, ContractNegotiationTerminationMessage, ContractOfferMessage,
+    MessageOffer, Permission, PolicyClass, Target,
 };
 use dsp_client::configuration::Configuration;
 use odrl::functions::state_machine::{ConsumerStateMachine, ProviderState, ProviderStateMachine};
+use reqwest::header::{AUTHORIZATION, HOST};
+use reqwest::Client;
+use reqwest::Error;
 use serde_json::{json, Value};
 use std::collections::HashMap;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::sync::MutexGuard;
+use tokio::task;
+use tokio::time::sleep;
 use tracing::{debug, error, info};
 use uuid::Uuid;
+use crate::common::DEFAULT_CONTEXT;
 
 // SharedState:
 //     Key: PID of the contract negotiation
 //     Value: Tuple of ContractNegotiation and ProviderStateMachine<ProviderState>, to keep track of the state of the negotiation
 type SharedState =
     Arc<Mutex<HashMap<String, (ContractNegotiation, ProviderStateMachine<ProviderState>)>>>;
+
+async fn send_agreement(
+    agreement: ContractAgreementMessage,
+    cb_address: String,
+    pid: String,
+) -> Result<(), Error> {
+    let mut dest = cb_address
+        .clone()
+        .replace("consumer-connector", "localhost");
+    dest = dest.replace("9194", "19194");
+    let dest = format!("{}/negotiations/{}/agreement", dest, pid);
+    debug!(
+        "[DSP] Sending Contract Agreement Message to Consumer at {:#?}",
+        dest.clone()
+    );
+    let http_client = Client::new();
+    let mut headers = HeaderMap::new();
+    headers.insert(AUTHORIZATION, HeaderValue::from_static("123456"));
+    headers.insert("x-api-key", HeaderValue::from_static("123456"));
+    let response = http_client
+        .post(dest)
+        .json(&agreement)
+        .headers(headers)
+        .send()
+        .await;
+    debug!("[DSP] Response received from the Consumer: {:#?}", response);
+
+    Ok(())
+}
+
+async fn send_finalization(event_message: ContractNegotiationEventMessage, dest: String) {
+    debug!(
+        "[DSP] Sending Contract Negotiation Finalization Message to Consumer at {:#?}",
+        dest.clone()
+    );
+    let http_client = Client::new();
+    let response = http_client.post(dest).json(&event_message).send().await;
+    debug!("[DSP] Response received from the Consumer: {:#?}", response);
+}
 
 pub async fn get_negotiation(
     State(state): State<SharedState>,
@@ -78,35 +126,8 @@ pub async fn request_negotiation(
 
         let pid = Uuid::new_v4().to_string();
 
-        let default_context = HashMap::from([
-            (
-                "@vocab".to_string(),
-                Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-            ),
-            (
-                "edc".to_string(),
-                Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-            ),
-            (
-                "dcat".to_string(),
-                Value::String("http://www.w3.org/ns/dcat#".to_string()),
-            ),
-            (
-                "dct".to_string(),
-                Value::String("http://purl.org/dc/terms/".to_string()),
-            ),
-            (
-                "odrl".to_string(),
-                Value::String("http://www.w3.org/ns/odrl/2/".to_string()),
-            ),
-            (
-                "dspace".to_string(),
-                Value::String("https://w3id.org/dspace/v0.8/".to_string()),
-            ),
-        ]);
-
         let negotiation = ContractNegotiation {
-            context: default_context,
+            context: DEFAULT_CONTEXT.clone(),
             dsp_type: "dspace:ContractNegotiation".to_string(),
             consumer_pid: request_message["dspace:consumerPid"]
                 .as_str()
@@ -132,7 +153,65 @@ pub async fn request_negotiation(
 
         state.insert(pid.clone(), (negotiation.clone(), fsm.clone()));
 
-        return (StatusCode::CREATED, Json(negotiation.clone())).into_response();
+        let policy_id = request_message["dspace:offer"]["@id"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        let asset_id = request_message["dspace:offer"]["odrl:target"]["@id"]
+            .as_str()
+            .unwrap()
+            .to_string();
+
+        let agreement_message = ContractAgreementMessage {
+            context: DEFAULT_CONTEXT.clone(),
+            dsp_type: "dspace:ContractAgreementMessage".to_string(),
+            provider_pid: pid.clone(),
+            consumer_pid: request_message["dspace:consumerPid"]
+                .as_str()
+                .unwrap()
+                .to_string(),
+            agreement: Agreement {
+                policy_class: PolicyClass {
+                    abstract_policy_rule: AbstractPolicyRule {
+                        assigner: Some("provider".to_string()),
+                        assignee: Some("consumer".to_string()),
+                    },
+                    id: policy_id.clone(),
+                    profile: vec![],
+                    permission: vec![],
+                    obligation: vec![],
+                    target: Target {
+                        id: asset_id.clone(),
+                    },
+                },
+                odrl_type: "odrl:Agreement".to_string(),
+                id: Uuid::new_v4().to_string(),
+                target: asset_id.clone(),
+                timestamp: Some(chrono::Utc::now().to_rfc3339()),
+            },
+            callback_address: "http://localhost:3000/".to_string(),
+        };
+
+        task::spawn(async move {
+            tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+            if let Err(e) = send_agreement(
+                agreement_message,
+                request_message["dspace:callbackAddress"]
+                    .as_str()
+                    .unwrap()
+                    .to_string(),
+                request_message["dspace:consumerPid"]
+                    .as_str()
+                    .unwrap()
+                    .to_string(),
+            )
+            .await
+            {
+                error!("[DSP] Failed to send agreement: {}", e);
+            }
+        });
+
+        return (StatusCode::OK, Json(negotiation.clone())).into_response();
     }
 
     debug!("[DSP] I'm a Teapot!");
@@ -148,8 +227,45 @@ pub async fn accept_offer() -> impl IntoResponse {
     unimplemented!()
 }
 
-pub async fn verify_agreement() -> impl IntoResponse {
-    unimplemented!()
+pub async fn verify_agreement(
+    headers: HeaderMap,
+    State(state): State<SharedState>,
+    Path(pid): Path<String>,
+    Json(request_message): Json<Value>,
+) -> impl IntoResponse {
+    info!("[DSP] Verify Negotiation called");
+    debug!(
+        "[DSP] Received Negotiation verification request for pid {:#?}",
+        pid.clone()
+    );
+
+    // TODO Verify ...
+
+    // Send Finalization
+
+    let finalize_message = ContractNegotiationEventMessage {
+        context: DEFAULT_CONTEXT.clone(),
+        dsp_type: "dspace:ContractNegotiationEventMessage".to_string(),
+        provider_pid: request_message["dspace:providerPid"]
+            .as_str()
+            .unwrap()
+            .to_string(),
+        consumer_pid: request_message["dspace:consumerPid"]
+            .as_str()
+            .unwrap()
+            .to_string(),
+        event_type: EventType::FINALIZED,
+    };
+
+    let event_url = format!("{}", headers["host"].to_str().unwrap().to_string());
+
+    send_finalization(
+        finalize_message,
+        headers["host"].to_str().unwrap().to_string(),
+    )
+    .await;
+
+    StatusCode::OK
 }
 
 pub async fn terminate_negotiation(
@@ -167,7 +283,7 @@ pub async fn terminate_negotiation(
     let mut state = state.lock().await;
 
     match state.get(&pid) {
-        Some((negotiation, _)) => {
+        Some((negotiation, state_machine)) => {
             let reason = termination_request["dspace:reason"].clone();
             debug!(
                 "[DSP] Received Contract Negotiation termination for id {:#?} with reason {}",
@@ -177,35 +293,10 @@ pub async fn terminate_negotiation(
 
             let host = headers["host"].to_str().unwrap();
 
-            let default_context = HashMap::from([
-                (
-                    "@vocab".to_string(),
-                    Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-                ),
-                (
-                    "edc".to_string(),
-                    Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-                ),
-                (
-                    "dcat".to_string(),
-                    Value::String("http://www.w3.org/ns/dcat#".to_string()),
-                ),
-                (
-                    "dct".to_string(),
-                    Value::String("http://purl.org/dc/terms/".to_string()),
-                ),
-                (
-                    "odrl".to_string(),
-                    Value::String("http://www.w3.org/ns/odrl/2/".to_string()),
-                ),
-                (
-                    "dspace".to_string(),
-                    Value::String("https://w3id.org/dspace/v0.8/".to_string()),
-                ),
-            ]);
+            let partner = state_machine.negotiation_partner.as_str().clone();
 
             let negotiation = ContractNegotiation {
-                context: default_context,
+                context: DEFAULT_CONTEXT.clone(),
                 dsp_type: "dspace:ContractNegotiation".to_string(),
                 consumer_pid: termination_request["dspace:consumerPid"]
                     .to_string()
@@ -215,8 +306,8 @@ pub async fn terminate_negotiation(
             };
 
             let mut fsm = ProviderStateMachine::new(
-                host.clone(),
-                "localhost:3000", // TODO: Change to a dynamic value
+                partner.clone(), // TODO
+                host.clone(), // TODO: Change to a dynamic value
             );
 
             debug!(
@@ -226,12 +317,12 @@ pub async fn terminate_negotiation(
 
             let transition_message = format!(
                 "Requesting Contract Negotiation Termination from {}",
-                host.clone()
+                partner.clone()    // TODO
             );
             fsm.transition_to_terminating(transition_message.as_str());
             let transition_message = format!(
                 "Terminated after Contract Negotiation Termination request from {} with reason {}",
-                host.clone(),
+                partner.clone(),   //TODO
                 reason.clone()
             );
             fsm.transition_to_terminated(transition_message.as_str());

@@ -25,3 +25,5 @@ tracing = "0.1.40"
 chrono = "0.4.38"
 uuid = { version = "1.10.0", features = ["v4"] }
 reqwest = "0.12.8"
+jwt-simple = "0.12.10"
+lazy_static = "1.4.0"
