@@ -17,6 +17,7 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tracing::{debug, error, info};
 use uuid::Uuid;
+use crate::common::DEFAULT_CONTEXT;
 
 type SharedState =
     Arc<Mutex<HashMap<String, (TransferProcess, ConsumerStateMachine<ConsumerState>)>>>;
@@ -47,35 +48,9 @@ async fn tp_request_management2dsp(
     management_tp: TransferRequest,
     consumer_pid: String,
 ) -> TransferRequestMessage {
-    let default_context = HashMap::from([
-        (
-            "@vocab".to_string(),
-            Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-        ),
-        (
-            "edc".to_string(),
-            Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-        ),
-        (
-            "dcat".to_string(),
-            Value::String("http://www.w3.org/ns/dcat#".to_string()),
-        ),
-        (
-            "dct".to_string(),
-            Value::String("http://purl.org/dc/terms/".to_string()),
-        ),
-        (
-            "odrl".to_string(),
-            Value::String("http://www.w3.org/ns/odrl/2/".to_string()),
-        ),
-        (
-            "dspace".to_string(),
-            Value::String("https://w3id.org/dspace/v0.8/".to_string()),
-        ),
-    ]);
 
     TransferRequestMessage {
-        context: default_context,
+        context: DEFAULT_CONTEXT.clone(),
         dsp_type: "dspace:TransferRequestMessage".to_string(),
         agreement_id: management_tp.contract_id,
         dct_format: management_tp.transfer_type,
