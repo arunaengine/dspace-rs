@@ -25,6 +25,7 @@ use std::{collections::HashMap, sync::Arc};
 use tokio::sync::Mutex;
 use tracing::{debug, error, info};
 use tracing_subscriber::fmt::format;
+use crate::common::DEFAULT_CONTEXT;
 
 // Shared state to store contract negotiations and their corresponding consumer and provider state machines
 type SharedState = Arc<
@@ -132,35 +133,9 @@ async fn termination_management2dsp(
     consumer_pid: String,
     provider_pid: String,
 ) -> ContractNegotiationTerminationMessage {
-    let default_context = HashMap::from([
-        (
-            "@vocab".to_string(),
-            Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-        ),
-        (
-            "edc".to_string(),
-            Value::String("https://w3id.org/edc/v0.0.1/ns/".to_string()),
-        ),
-        (
-            "dcat".to_string(),
-            Value::String("http://www.w3.org/ns/dcat#".to_string()),
-        ),
-        (
-            "dct".to_string(),
-            Value::String("http://purl.org/dc/terms/".to_string()),
-        ),
-        (
-            "odrl".to_string(),
-            Value::String("http://www.w3.org/ns/odrl/2/".to_string()),
-        ),
-        (
-            "dspace".to_string(),
-            Value::String("https://w3id.org/dspace/v0.8/".to_string()),
-        ),
-    ]);
 
     ContractNegotiationTerminationMessage {
-        context: default_context,
+        context: DEFAULT_CONTEXT.clone(),
         dsp_type: "dspace:ContractNegotiationTerminationMessage".to_string(),
         provider_pid,
         consumer_pid,
