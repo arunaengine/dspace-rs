@@ -24,3 +24,9 @@ pub use self::rule::Duty;
 pub use self::rule::Obligation;
 pub mod type_alias;
 pub use self::type_alias::IRI;
+
+pub enum StringOrX {
+    String(String),
+    Target(Asset),
+    Profile(Vec<IRI>)
+}
